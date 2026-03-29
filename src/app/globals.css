@@ -1,26 +1,92 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@theme {
+  --color-neon-blue: #0ea5e9;
+  --color-neon-purple: #c084fc;
+  --color-neon-cyan: #06b6d4;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-dark-bg: #09090b;
+  --color-dark-surface: #18181b;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --animate-pulse-glow: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-float: float 6s ease-in-out infinite;
+
+  @keyframes pulse-glow {
+    0%, 100% {
+      opacity: 1;
+      box-shadow: 0 0 10px var(--color-neon-blue), 0 0 20px var(--color-neon-blue);
+    }
+    50% {
+      opacity: .5;
+      box-shadow: 0 0 5px var(--color-neon-blue), 0 0 10px var(--color-neon-blue);
+    }
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
   }
 }
 
+html {
+  scroll-behavior: initial; /* Lenis handles smooth scrolling */
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-dark-bg);
+  color: #fff;
+}
+
+/* Custom lenis styles */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* Neon utilities */
+.text-glow {
+  text-shadow: 0 0 10px rgba(14, 165, 233, 0.5), 0 0 20px rgba(14, 165, 233, 0.3);
+}
+
+.border-glow {
+  box-shadow: 0 0 10px rgba(14, 165, 233, 0.2), inset 0 0 10px rgba(14, 165, 233, 0.1);
+}
+
+.border-glow-hover:hover {
+  box-shadow: 0 0 15px rgba(192, 132, 252, 0.4), inset 0 0 10px rgba(192, 132, 252, 0.2);
+  border-color: var(--color-neon-purple);
+}
+
+/* Scrollbar hiding */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-dark-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: #27272a;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-neon-blue);
 }

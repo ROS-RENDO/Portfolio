@@ -1,120 +1,77 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
-import { 
-  FiGitBranch, FiGitPullRequest, FiPlay, FiShield, FiCheck, FiSettings, FiActivity 
-} from "react-icons/fi";
-import {
-  SiNextdotjs, SiReact, SiTypescript, SiNestjs, SiPostgresql, SiRedis,
-  SiDocker, SiPython, SiFastapi, SiStripe, SiGo
-} from "react-icons/si";
-import { TbBrandThreejs } from "react-icons/tb";
+import { motion } from "framer-motion";
+import { FiGitBranch, FiGitPullRequest, FiCheckSquare, FiMessageSquare } from "react-icons/fi";
 
-const PIPELINE_NODES = [
+const PROOF_AREAS = [
   {
-    id: "local",
-    label: "Local Dev",
-    icon: FiSettings,
-    cmd: "git commit -m \"feat: add payments escrow check\"",
-    desc: "Develop code locally. Hooks validate lint/types before committing."
+    label: "Backend",
+    color: "cyan",
+    borderClass: "border-cyan-500/30 hover:border-cyan-500/60",
+    glowClass: "bg-cyan-500/5 hover:bg-cyan-500/10",
+    dotClass: "bg-cyan-400",
+    textClass: "text-cyan-400",
+    skills: [
+      { name: "NestJS", proof: "ServiceFinder, TaskFlow", scope: "API / Auth / Booking / Payments" },
+      { name: "Node.js", proof: "5 production projects", scope: "REST APIs, middleware, queue jobs" },
+      { name: "PostgreSQL", proof: "3 projects", scope: "Relational data, transactions, migrations" },
+      { name: "Redis", proof: "ServiceFinder, TaskFlow", scope: "Session cache, real-time pub/sub" },
+    ],
   },
   {
-    id: "branch",
-    label: "Feature Push",
-    icon: FiGitBranch,
-    cmd: "git push origin feature/payment-escrow",
-    desc: "Code pushed triggers automated workflow actions in GitHub runner."
+    label: "Frontend",
+    color: "purple",
+    borderClass: "border-purple-500/30 hover:border-purple-500/60",
+    glowClass: "bg-purple-500/5 hover:bg-purple-500/10",
+    dotClass: "bg-purple-400",
+    textClass: "text-purple-400",
+    skills: [
+      { name: "React", proof: "ServiceFinder, Portfolio, Trading Dashboard", scope: "Production UIs, component architecture" },
+      { name: "Next.js", proof: "4 projects", scope: "SSR, App Router, API routes" },
+      { name: "TypeScript", proof: "All current projects", scope: "Type safety, interfaces, generics" },
+      { name: "Three.js + R3F", proof: "This portfolio", scope: "3D scenes, camera splines, WebGL" },
+    ],
   },
   {
-    id: "pr",
-    label: "Pull Request",
-    icon: FiGitPullRequest,
-    cmd: "PR #42 opened to merge to main",
-    desc: "Triggers validation matrix (Linting &rarr; Types &rarr; Unit Tests)."
+    label: "Automation & AI",
+    color: "rose",
+    borderClass: "border-rose-500/30 hover:border-rose-500/60",
+    glowClass: "bg-rose-500/5 hover:bg-rose-500/10",
+    dotClass: "bg-rose-400",
+    textClass: "text-rose-400",
+    skills: [
+      { name: "Python", proof: "YOLOv8 vision system, MT5 automation", scope: "Model inference, script automation" },
+      { name: "MQL5", proof: "Vibe Trading Automation", scope: "Custom indicators, EA bots, backtesting" },
+      { name: "YOLOv8 / OpenCV", proof: "AI Vision project", scope: "Object detection, real-time inference" },
+      { name: "FastAPI", proof: "AI inference service", scope: "Model serving, async endpoints" },
+    ],
   },
   {
-    id: "test",
-    label: "Tests Check",
-    icon: FiPlay,
-    cmd: "npm run test:ci (vitest run --coverage)",
-    desc: "Runs backend and frontend test suites to assert coverage."
+    label: "Infrastructure",
+    color: "amber",
+    borderClass: "border-amber-500/30 hover:border-amber-500/60",
+    glowClass: "bg-amber-500/5 hover:bg-amber-500/10",
+    dotClass: "bg-amber-400",
+    textClass: "text-amber-400",
+    skills: [
+      { name: "Docker", proof: "ServiceFinder, AI service, Trading system", scope: "Containerization, Compose, deployment" },
+      { name: "Stripe", proof: "ServiceFinder (Escrow + Connect)", scope: "Payment intents, webhooks, disputes" },
+      { name: "Prisma", proof: "ServiceFinder, EcoStore", scope: "ORM, migrations, relations" },
+      { name: "GitHub Actions", proof: "This portfolio + ServiceFinder", scope: "CI/CD: lint, test, build, deploy" },
+    ],
   },
-  {
-    id: "security",
-    label: "Security Scan",
-    icon: FiShield,
-    cmd: "CodeQL dependency scanning active",
-    desc: "Identifies vulnerable configurations or dependency CVE logs."
-  },
-  {
-    id: "production",
-    label: "Production",
-    icon: FiCheck,
-    cmd: "Merge to main && deploy webhook",
-    desc: "Code merged, container rebuilt, reverse proxy reloads automatically."
-  }
 ];
 
-const CONSTELLATION_NODES = [
-  { id: "ts", label: "TypeScript", icon: SiTypescript, x: 100, y: 100, color: "#3178c6", project: "All active codebases" },
-  { id: "react", label: "React", icon: SiReact, x: 60, y: 60, color: "#61dafb", project: "ServiceFinder, Dashboard" },
-  { id: "nextjs", label: "Next.js", icon: SiNextdotjs, x: 140, y: 60, color: "#ffffff", project: "ServiceFinder, StackGen" },
-  { id: "three", label: "Three.js", icon: TbBrandThreejs, x: 100, y: 40, color: "#ffffff", project: "Surprise Spline Canvas" },
-  { id: "nestjs", label: "NestJS", icon: SiNestjs, x: 60, y: 140, color: "#e0234e", project: "ServiceFinder, Real Estate" },
-  { id: "postgres", label: "PostgreSQL", icon: SiPostgresql, x: 140, y: 140, color: "#336791", project: "ServiceFinder, Real Estate" },
-  { id: "redis", label: "Redis", icon: SiRedis, x: 100, y: 160, color: "#dc382d", project: "ServiceFinder caches" },
-  { id: "docker", label: "Docker", icon: SiDocker, x: 30, y: 100, color: "#2496ed", project: "ServiceFinder, AI Builder" },
-  { id: "stripe", label: "Stripe", icon: SiStripe, x: 170, y: 100, color: "#635bff", project: "ServiceFinder Connect" },
-  { id: "python", label: "Python", icon: SiPython, x: 35, y: 50, color: "#3776ab", project: "YOLOv8 & Quant feeds" },
-  { id: "fastapi", label: "FastAPI", icon: SiFastapi, x: 35, y: 150, color: "#009688", project: "AI Inference Server" },
-  { id: "go", label: "Go", icon: SiGo, x: 165, y: 150, color: "#00add8", project: "Distributed Consensus Engine" }
-];
-
-const CONSTELLATION_LINKS = [
-  { from: "ts", to: "react" },
-  { from: "ts", to: "nextjs" },
-  { from: "ts", to: "nestjs" },
-  { from: "react", to: "nextjs" },
-  { from: "nextjs", to: "three" },
-  { from: "react", to: "three" },
-  { from: "nestjs", to: "postgres" },
-  { from: "postgres", to: "redis" },
-  { from: "nestjs", to: "redis" },
-  { from: "nestjs", to: "docker" },
-  { from: "ts", to: "docker" },
-  { from: "postgres", to: "stripe" },
-  { from: "nextjs", to: "stripe" },
-  { from: "python", to: "fastapi" },
-  { from: "python", to: "ts" },
-  { from: "docker", to: "fastapi" },
-  { from: "go", to: "postgres" },
-  { from: "go", to: "docker" }
+const WORKFLOW_STEPS = [
+  { icon: FiGitBranch, label: "Branch", desc: "feature/task-name" },
+  { icon: FiCheckSquare, label: "Implement", desc: "code + tests" },
+  { icon: FiGitPullRequest, label: "PR", desc: "code review" },
+  { icon: FiMessageSquare, label: "Iterate", desc: "feedback loop" },
 ];
 
 export default function AboutSection() {
-  const [activePipeline, setActivePipeline] = useState<string>("local");
-  const [activeTech, setActiveTech] = useState<string>("ts");
-
-  const currentNode = PIPELINE_NODES.find(n => n.id === activePipeline) || PIPELINE_NODES[0];
-  const activeTechObj = CONSTELLATION_NODES.find(n => n.id === activeTech) || CONSTELLATION_NODES[0];
-
   return (
-    <section id="about" className="relative py-32 bg-[#09090b]">
-      
-      {/* Marching laser lines animation style injection */}
-      <style dangerouslySetInnerHTML={{ __html: `
-        @keyframes marching-dash {
-          to {
-            stroke-dashoffset: -20;
-          }
-        }
-        .constellation-laser {
-          stroke-dasharray: 5, 5;
-          animation: marching-dash 1.2s linear infinite;
-        }
-      `}} />
-
+    <section id="about" className="relative py-32">
       <div className="container mx-auto px-6 xl:pl-32 max-w-7xl">
 
         {/* Section header */}
@@ -126,13 +83,13 @@ export default function AboutSection() {
           className="mb-20"
         >
           <h2 className="font-space-grotesk text-4xl font-bold md:text-5xl">
-            <span className="text-zinc-500">01.</span> About <span className="text-cyan-400 text-glow">Me</span>
+            <span className="text-zinc-600">01.</span> About <span className="text-cyan-400 text-glow">Me</span>
           </h2>
           <div className="mt-4 h-1 w-24 bg-gradient-to-r from-cyan-500 to-transparent" />
         </motion.div>
 
-        {/* Bio + Interactive Pipeline */}
-        <div className="grid gap-16 lg:grid-cols-2 mb-20">
+        {/* Bio + Workflow */}
+        <div className="grid gap-16 lg:grid-cols-2 mb-24">
           {/* Bio */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
@@ -142,11 +99,17 @@ export default function AboutSection() {
             className="space-y-5 text-zinc-400 leading-relaxed"
           >
             <p className="text-lg">
-              I&apos;m a <span className="text-white font-semibold">software engineer</span> who builds backend services, algorithmic systems, and automation pipelines.
+              I&apos;m a <span className="text-white font-semibold">software engineer</span> who has spent the last two years building real systems — a service marketplace, a quantitative trading engine, a computer vision pipeline, and the 3D portfolio you&apos;re navigating right now.
             </p>
             <p>
-              I build functional systems rather than templates. When I choose a dependency, I map out its transactions, limits, and operational trade-offs.
+              I don&apos;t build demos. I build things that solve real problems, then I understand every architectural decision behind them. When I pick a technology, I can tell you why — and what the alternative trade-offs were.
             </p>
+            <p>
+              I&apos;m actively working toward my first team role. I know how to use Git properly, write code that other engineers can review, and ask the right questions.
+            </p>
+            <blockquote className="mt-6 border-l-2 border-cyan-500/50 pl-4 text-zinc-500 italic text-sm">
+              &ldquo;Don&apos;t believe me. Look at what I built.&rdquo;
+            </blockquote>
             <div className="pt-4 flex gap-3 flex-wrap">
               <a href="#projects" className="inline-flex items-center gap-2 rounded-full border border-cyan-500/40 bg-cyan-500/10 px-5 py-2 font-space-grotesk text-sm font-medium text-cyan-400 transition-all hover:bg-cyan-500/20">
                 View Projects →
@@ -157,172 +120,93 @@ export default function AboutSection() {
             </div>
           </motion.div>
 
-          {/* Interactive CI/CD Pipeline */}
+          {/* How I Work in a team */}
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            <div className="rounded-2xl border border-zinc-800 bg-[#18181b]/60 p-6 backdrop-blur-sm">
-              <p className="font-space-grotesk text-xs font-bold uppercase tracking-widest text-zinc-500 mb-6">Pipeline Workflow</p>
-              
-              {/* Pipeline Nodes Map */}
-              <div className="grid grid-cols-3 md:grid-cols-6 gap-2 mb-6">
-                {PIPELINE_NODES.map((node) => {
-                  const Icon = node.icon;
-                  const isActive = node.id === activePipeline;
-                  return (
-                    <button
-                      key={node.id}
-                      onClick={() => setActivePipeline(node.id)}
-                      className={`flex flex-col items-center gap-1.5 p-2 rounded-xl border transition-all duration-200 ${
-                        isActive
-                          ? "border-cyan-500/50 bg-cyan-500/5 text-cyan-400"
-                          : "border-zinc-850/80 bg-zinc-900/40 text-zinc-500 hover:border-zinc-700 hover:text-zinc-300"
-                      }`}
-                    >
-                      <Icon size={16} />
-                      <span className="font-space-grotesk text-[9px] font-bold text-center tracking-tight leading-none">{node.label}</span>
-                    </button>
-                  );
-                })}
+            <div className="rounded-2xl border border-zinc-800 bg-[#18181b]/60 p-8 backdrop-blur-sm">
+              <p className="font-space-grotesk text-xs font-bold uppercase tracking-widest text-zinc-500 mb-6">Engineering Workflow</p>
+              <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2">
+                {WORKFLOW_STEPS.map((step, i) => (
+                  <div key={i} className="flex items-center gap-2 flex-shrink-0">
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-700 bg-zinc-900 text-cyan-400">
+                        <step.icon size={18} />
+                      </div>
+                      <span className="font-space-grotesk text-xs font-bold text-zinc-300">{step.label}</span>
+                      <span className="font-mono text-[10px] text-zinc-600">{step.desc}</span>
+                    </div>
+                    {i < WORKFLOW_STEPS.length - 1 && (
+                      <div className="w-8 h-[1px] bg-zinc-700 flex-shrink-0 -mt-4" />
+                    )}
+                  </div>
+                ))}
               </div>
 
-              {/* Injected terminal panel */}
-              <div className="rounded-xl border border-zinc-850 bg-zinc-950 p-4 font-mono text-[11px] leading-relaxed relative min-h-[120px]">
-                <div className="absolute top-3 right-4 flex space-x-1.5">
-                  <div className="w-1.5 h-1.5 rounded-full bg-red-500/50" />
-                  <div className="w-1.5 h-1.5 rounded-full bg-amber-500/50" />
-                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/50" />
-                </div>
-                <div className="text-zinc-500 mb-2 border-b border-zinc-900 pb-2">Console Output</div>
-                <div className="text-cyan-400 mb-2 font-bold">$ {currentNode.cmd}</div>
-                <div className="text-zinc-400">{currentNode.desc}</div>
+              <div className="space-y-3">
+                {[
+                  { label: "Version Control", val: "Git — conventional commits, feature branches, rebasing" },
+                  { label: "Code Review", val: "Pull requests with description, screenshots, and test notes" },
+                  { label: "Documentation", val: "README, inline comments, API contracts (OpenAPI)" },
+                  { label: "Communication", val: "Async-first — clear, concise, unblocking others" },
+                  { label: "CI/CD", val: "GitHub Actions — lint → typecheck → build → deploy" },
+                ].map((item, i) => (
+                  <div key={i} className="flex gap-3 text-sm">
+                    <span className="text-zinc-500 min-w-[120px] font-mono text-xs mt-0.5">{item.label}</span>
+                    <span className="text-zinc-400">{item.val}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </motion.div>
         </div>
 
-        {/* ── Constellation Map (Skill Evidence) ── */}
+        {/* Evidence-based skill proof grid */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8 }}
-          className="border-t border-zinc-900 pt-16"
+          className="mb-6"
         >
-          <div className="mb-8">
-            <p className="font-space-grotesk text-xs font-bold uppercase tracking-widest text-zinc-500 mb-1">Stack Connections</p>
-            <h3 className="font-space-grotesk text-3xl font-black text-white">Visual Constellation Map</h3>
-            <p className="text-zinc-500 text-xs mt-1">Select any tech star node to trace its data relationships and codebase connections.</p>
-          </div>
-
-          <div className="grid gap-8 md:grid-cols-12 items-center">
-            
-            {/* Left: Responsive SVG Constellation */}
-            <div className="col-span-12 md:col-span-7 flex justify-center items-center bg-[#111113]/40 border border-zinc-850 rounded-3xl p-6 backdrop-blur-sm min-h-[380px] relative overflow-hidden">
-              <svg className="w-full max-w-[400px] h-[320px] overflow-visible" viewBox="0 0 200 200">
-                
-                {/* Connection paths */}
-                {CONSTELLATION_LINKS.map((link, idx) => {
-                  const nodeFrom = CONSTELLATION_NODES.find(n => n.id === link.from);
-                  const nodeTo = CONSTELLATION_NODES.find(n => n.id === link.to);
-                  if (!nodeFrom || !nodeTo) return null;
-
-                  const isConnectedToActive = activeTech === link.from || activeTech === link.to;
-
-                  return (
-                    <line
-                      key={`link-${idx}`}
-                      x1={nodeFrom.x}
-                      y1={nodeFrom.y}
-                      x2={nodeTo.x}
-                      y2={nodeTo.y}
-                      stroke={isConnectedToActive ? activeTechObj.color : "#27272a"}
-                      strokeWidth={isConnectedToActive ? "1.8" : "0.8"}
-                      strokeDasharray={isConnectedToActive ? "5, 5" : "none"}
-                      className={isConnectedToActive ? "constellation-laser" : ""}
-                      style={{ transition: "stroke 0.4s, stroke-width 0.4s" }}
-                    />
-                  );
-                })}
-
-                {/* Node Circles */}
-                {CONSTELLATION_NODES.map((node) => {
-                  const Icon = node.icon;
-                  const isActive = node.id === activeTech;
-
-                  return (
-                    <g key={node.id} className="cursor-pointer" onClick={() => setActiveTech(node.id)}>
-                      {isActive && (
-                        <circle
-                          cx={node.x}
-                          cy={node.y}
-                          r="12"
-                          fill="none"
-                          stroke={node.color}
-                          strokeWidth="1"
-                          className="animate-ping"
-                          style={{ transformOrigin: `${node.x}px ${node.y}px` }}
-                        />
-                      )}
-                      <circle
-                        cx={node.x}
-                        cy={node.y}
-                        r="8"
-                        fill="#09090b"
-                        stroke={isActive ? node.color : "#27272a"}
-                        strokeWidth="1.5"
-                        style={{ transition: "stroke 0.3s" }}
-                      />
-                      <g transform={`translate(${node.x - 4}, ${node.y - 4})`}>
-                        <Icon size={8} style={{ color: isActive ? node.color : "#71717a" }} />
-                      </g>
-                    </g>
-                  );
-                })}
-              </svg>
-            </div>
-
-            {/* Right: Selected Node Details Display (Compact, visual terminal) */}
-            <div className="col-span-12 md:col-span-5">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeTech}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.3 }}
-                  className="rounded-2xl border border-zinc-850 bg-zinc-950/60 p-6 backdrop-blur-sm min-h-[220px] flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="flex justify-between items-center border-b border-zinc-900 pb-3 mb-4">
-                      <div className="flex items-center gap-2">
-                        <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: activeTechObj.color }} />
-                        <span className="font-space-grotesk text-sm font-black text-white uppercase">{activeTechObj.label} Node</span>
-                      </div>
-                      <span className="text-[9px] text-zinc-550 flex items-center gap-1"><FiActivity size={10} /> Active Star</span>
-                    </div>
-
-                    <div className="space-y-4">
-                      <div>
-                        <span className="text-zinc-600 text-[8px] uppercase tracking-widest block font-space-grotesk font-black mb-1.5">Connected Codebase:</span>
-                        <span className="text-cyan-400 font-mono text-xs font-bold">$ {activeTechObj.project}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-8 pt-4 border-t border-zinc-900 text-zinc-500 text-[10px] font-mono">
-                    Constellation node traces dependencies across your core production repositories.
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-            </div>
-
-          </div>
+          <p className="font-space-grotesk text-xs font-bold uppercase tracking-widest text-zinc-500 mb-1">Skill Evidence</p>
+          <p className="text-zinc-600 text-sm">Every technology listed below is attached to a real project where I used it.</p>
         </motion.div>
 
+        <div className="grid gap-4 md:grid-cols-2">
+          {PROOF_AREAS.map((area, aIdx) => (
+            <motion.div
+              key={aIdx}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.6, delay: aIdx * 0.1 }}
+              className={`rounded-2xl border ${area.borderClass} ${area.glowClass} p-6 backdrop-blur-sm transition-all duration-300`}
+            >
+              <div className="flex items-center gap-2 mb-5">
+                <span className={`h-2 w-2 rounded-full ${area.dotClass}`} />
+                <span className={`font-space-grotesk text-xs font-bold uppercase tracking-widest ${area.textClass}`}>
+                  {area.label}
+                </span>
+              </div>
+              <div className="space-y-4">
+                {area.skills.map((skill, sIdx) => (
+                  <div key={sIdx} className="group">
+                    <div className="flex items-start justify-between gap-2">
+                      <span className="font-space-grotesk text-sm font-semibold text-zinc-200">{skill.name}</span>
+                      <span className="font-mono text-[10px] text-zinc-600 text-right leading-4 mt-0.5">{skill.proof}</span>
+                    </div>
+                    <p className="text-xs text-zinc-500 mt-0.5">{skill.scope}</p>
+                    {sIdx < area.skills.length - 1 && <div className="mt-4 h-[1px] bg-zinc-800" />}
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
   );

@@ -7,9 +7,9 @@ import { FiMenu, FiX } from "react-icons/fi";
 const NAV_LINKS = [
   { name: "Home", href: "#home" },
   { name: "About", href: "#about" },
-  { name: "Tech Stack", href: "#tech-stack" },
   { name: "Projects", href: "#projects" },
   { name: "Journey", href: "#journey" },
+  { name: "GitHub", href: "#github" },
   { name: "Contact", href: "#contact" },
 ];
 

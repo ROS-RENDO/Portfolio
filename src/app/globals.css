@@ -90,3 +90,226 @@ html.lenis, html.lenis body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-neon-blue);
 }
+
+/* 3D and Glitch Utilities */
+.perspective-1200 {
+  perspective: 1200px;
+}
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+@keyframes glitch {
+  0% {
+    transform: translate(0);
+    text-shadow: 0 0 10px rgba(14, 165, 233, 0.5);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+    text-shadow: -2px 0 red, 2px 0 blue;
+  }
+  40% {
+    transform: translate(-2px, -2px);
+    text-shadow: -2px 0 red, 2px 0 blue;
+  }
+  60% {
+    transform: translate(2px, 2px);
+    text-shadow: -2px 0 blue, 2px 0 red;
+  }
+  80% {
+    transform: translate(2px, -2px);
+    text-shadow: -2px 0 blue, 2px 0 red;
+  }
+  100% {
+    transform: translate(0);
+    text-shadow: 0 0 10px rgba(14, 165, 233, 0.5);
+  }
+}
+
+.animate-glitch {
+  animation: glitch 1.5s linear infinite;
+}
+
+/* Glassmorphism custom styling */
+.glass-panel {
+  background: rgba(9, 9, 11, 0.55);
+  backdrop-filter: blur(20px) saturate(190%);
+  -webkit-backdrop-filter: blur(20px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-glow {
+  box-shadow: 0 0 35px rgba(6, 182, 212, 0.08), inset 0 0 20px rgba(6, 182, 212, 0.04);
+}
+
+.glass-panel-glow:hover {
+  box-shadow: 0 0 50px rgba(6, 182, 212, 0.2), inset 0 0 25px rgba(6, 182, 212, 0.08);
+}
+
+/* Custom Grid Background Overlay */
+.grid-bg-overlay {
+  background-image: 
+    linear-gradient(to right, rgba(6, 182, 212, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(6, 182, 212, 0.05) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+/* Border Lightning/Glowing Beam Rotating Effects */
+@property --border-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes border-spin {
+  from {
+    --border-angle: 0deg;
+  }
+  to {
+    --border-angle: 360deg;
+  }
+}
+
+.border-lightning-outer {
+  background: conic-gradient(from var(--border-angle), var(--glow-1), var(--glow-2), var(--glow-1)) border-box;
+  animation: border-spin 4s linear infinite;
+  box-shadow: 0 0 15px var(--shadow-color);
+  transition: box-shadow 0.3s ease;
+}
+
+.border-lightning-outer:hover {
+  box-shadow: 0 0 30px var(--shadow-hover);
+}
+
+.theme-lightning-cyan {
+  --glow-1: #06b6d4;
+  --glow-2: #3b82f6;
+  --shadow-color: rgba(6, 182, 212, 0.12);
+  --shadow-hover: rgba(6, 182, 212, 0.25);
+}
+
+.theme-lightning-purple {
+  --glow-1: #a855f7;
+  --glow-2: #d946ef;
+  --shadow-color: rgba(168, 85, 247, 0.12);
+  --shadow-hover: rgba(168, 85, 247, 0.25);
+}
+
+.theme-lightning-emerald {
+  --glow-1: #10b981;
+  --glow-2: #059669;
+  --shadow-color: rgba(16, 185, 129, 0.12);
+  --shadow-hover: rgba(16, 185, 129, 0.25);
+}
+
+.theme-lightning-amber {
+  --glow-1: #f59e0b;
+  --glow-2: #eab308;
+  --shadow-color: rgba(245, 158, 11, 0.12);
+  --shadow-hover: rgba(245, 158, 11, 0.25);
+}
+
+.theme-lightning-rose {
+  --glow-1: #f43f5e;
+  --glow-2: #ec4899;
+  --shadow-color: rgba(244, 63, 94, 0.12);
+  --shadow-hover: rgba(244, 63, 94, 0.25);
+}
+
+.theme-lightning-violet {
+  --glow-1: #8b5cf6;
+  --glow-2: #6366f1;
+  --shadow-color: rgba(139, 92, 246, 0.12);
+  --shadow-hover: rgba(139, 92, 246, 0.25);
+}
+
+.theme-lightning-gold {
+  --glow-1: #eab308;
+  --glow-2: #fef08a;
+  --shadow-color: rgba(234, 179, 8, 0.15);
+  --shadow-hover: rgba(234, 179, 8, 0.35);
+}
+
+.theme-lightning-rainbow {
+  --glow-1: #ef4444;
+  --glow-2: #3b82f6;
+  --shadow-color: rgba(168, 85, 247, 0.12);
+  --shadow-hover: rgba(168, 85, 247, 0.25);
+  background: conic-gradient(from var(--border-angle), #ef4444, #3b82f6, #10b981, #f59e0b, #ef4444) border-box;
+}
+
+
+/* ─── Marquee / Ticker ──────────────────────────────────────────── */
+@keyframes marquee-left {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+@keyframes marquee-right {
+  0%   { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+.animate-marquee-left  { animation: marquee-left  28s linear infinite; }
+.animate-marquee-right { animation: marquee-right 28s linear infinite; }
+.pause-on-hover:hover .animate-marquee-left,
+.pause-on-hover:hover .animate-marquee-right { animation-play-state: paused; }
+
+/* ─── Shimmer sweep ─────────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%);
+  background-size: 200% auto;
+  animation: shimmer 2.4s linear infinite;
+}
+
+/* ─── Floating badge ────────────────────────────────────────────── */
+@keyframes badge-float {
+  0%,100% { transform: translateY(0px) rotate(-2deg); }
+  50%      { transform: translateY(-8px) rotate(2deg); }
+}
+.animate-badge-float { animation: badge-float 4s ease-in-out infinite; }
+
+/* ─── Gradient text flow ────────────────────────────────────────── */
+@keyframes gradient-flow {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.animate-gradient-text {
+  background-size: 200% 200%;
+  animation: gradient-flow 4s ease infinite;
+}
+
+/* ─── Status pulse dot ──────────────────────────────────────────── */
+@keyframes status-ping {
+  0%   { transform: scale(1); opacity: 1; }
+  75%, 100% { transform: scale(2.5); opacity: 0; }
+}
+.animate-status-ping { animation: status-ping 1.8s cubic-bezier(0,0,0.2,1) infinite; }
+
+/* ─── Card beam scan ─────────────────────────────────────────────── */
+@keyframes beam-scan {
+  0%   { left: -100%; }
+  100% { left: 200%; }
+}
+.animate-beam-scan {
+  animation: beam-scan 3s ease-in-out infinite;
+}
+
+/* ─── Scroll reveal baseline ─────────────────────────────────────── */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal-on-scroll.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+

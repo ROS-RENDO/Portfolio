@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useEffect, useState } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
 import * as THREE from "three";
 import { MotionValue } from "framer-motion";
@@ -517,6 +517,92 @@ function ThreeDCard({
 }
 
 // ─── 3D Heavenly Gates Model ─────────────────────────────────────────────────
+// ─── 3D Cyber Guardian / Explorer Character at Heavenly Gates ──────────────
+function CyberGuardianFigure() {
+  const figureRef = useRef<THREE.Group>(null);
+  const staffLightRef = useRef<THREE.PointLight>(null);
+
+  useFrame((state) => {
+    const t = state.clock.getElapsedTime();
+    if (figureRef.current) {
+      figureRef.current.position.y = Math.sin(t * 2) * 0.05;
+      figureRef.current.rotation.y = Math.sin(t * 1) * 0.08;
+    }
+    if (staffLightRef.current) {
+      staffLightRef.current.intensity = 2.5 + Math.sin(t * 3.5) * 1.0;
+    }
+  });
+
+  return (
+    <group ref={figureRef} scale={[0.85, 0.85, 0.85]}>
+      {/* Head with glowing cyan visor */}
+      <mesh position={[0, 0.85, 0]}>
+        <sphereGeometry args={[0.22, 24, 24]} />
+        <meshStandardMaterial color="#18181b" roughness={0.2} metalness={0.9} />
+      </mesh>
+      {/* Glowing Visor */}
+      <mesh position={[0, 0.86, 0.16]}>
+        <boxGeometry args={[0.22, 0.09, 0.12]} />
+        <meshStandardMaterial color="#06b6d4" emissive="#06b6d4" emissiveIntensity={3.0} />
+      </mesh>
+
+      {/* Torso & Armor */}
+      <mesh position={[0, 0.45, 0]}>
+        <boxGeometry args={[0.36, 0.48, 0.24]} />
+        <meshStandardMaterial color="#27272a" roughness={0.3} metalness={0.8} />
+      </mesh>
+      {/* Golden Chest Core */}
+      <mesh position={[0, 0.52, 0.13]}>
+        <circleGeometry args={[0.06, 16]} />
+        <meshStandardMaterial color="#fbbf24" emissive="#fbbf24" emissiveIntensity={3.0} />
+      </mesh>
+
+      {/* Left Arm & Staff of Code */}
+      <group position={[-0.26, 0.45, 0]}>
+        <mesh position={[0, -0.15, 0]}>
+          <cylinderGeometry args={[0.05, 0.05, 0.38, 12]} />
+          <meshStandardMaterial color="#18181b" metalness={0.8} />
+        </mesh>
+        {/* Glowing Golden Staff */}
+        <mesh position={[-0.08, 0.1, 0.1]}>
+          <cylinderGeometry args={[0.02, 0.02, 1.3, 12]} />
+          <meshStandardMaterial color="#fbbf24" emissive="#d97706" emissiveIntensity={2.0} metalness={0.9} />
+        </mesh>
+        <mesh position={[-0.08, 0.75, 0.1]}>
+          <octahedronGeometry args={[0.08, 0]} />
+          <meshStandardMaterial color="#38bdf8" emissive="#38bdf8" emissiveIntensity={3.5} />
+        </mesh>
+        <pointLight ref={staffLightRef} position={[-0.08, 0.75, 0.1]} intensity={2.5} distance={5} color="#38bdf8" />
+      </group>
+
+      {/* Right Arm */}
+      <group position={[0.26, 0.45, 0]}>
+        <mesh position={[0, -0.15, 0]}>
+          <cylinderGeometry args={[0.05, 0.05, 0.38, 12]} />
+          <meshStandardMaterial color="#18181b" metalness={0.8} />
+        </mesh>
+      </group>
+
+      {/* Legs */}
+      <mesh position={[-0.1, 0.08, 0]}>
+        <boxGeometry args={[0.12, 0.38, 0.16]} />
+        <meshStandardMaterial color="#18181b" metalness={0.8} />
+      </mesh>
+      <mesh position={[0.1, 0.08, 0]}>
+        <boxGeometry args={[0.12, 0.38, 0.16]} />
+        <meshStandardMaterial color="#18181b" metalness={0.8} />
+      </mesh>
+
+      {/* Floating Hologram Halo above Head */}
+      <mesh position={[0, 1.15, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[0.22, 0.015, 12, 32]} />
+        <meshStandardMaterial color="#fbbf24" emissive="#fbbf24" emissiveIntensity={2.5} />
+      </mesh>
+    </group>
+  );
+}
+
+// ─── 3D Heavenly Gates Model ─────────────────────────────────────────────────
 function HeavenlyGates() {
   const gatesRef = useRef<THREE.Group>(null);
   
@@ -531,11 +617,11 @@ function HeavenlyGates() {
 
   return (
     <group ref={gatesRef} position={[42, -0.5, -32]}>
-      {/* 1. Marble Stairs leading up */}
+      {/* 1. Obsidian Stairs leading up */}
       {[0, 1, 2, 3, 4, 5].map((step) => (
         <mesh key={step} position={[0, step * 0.15 - 0.2, step * -0.3 + 2]}>
           <boxGeometry args={[6 - step * 0.4, 0.16, 0.6]} />
-          <meshStandardMaterial color="#fafaf9" roughness={0.1} metalness={0.1} />
+          <meshStandardMaterial color="#27272a" roughness={0.2} metalness={0.4} />
         </mesh>
       ))}
 
@@ -543,11 +629,11 @@ function HeavenlyGates() {
       <group position={[-2.2, 1.5, 0]}>
         <mesh position={[0, -1.4, 0]}>
           <boxGeometry args={[0.5, 0.3, 0.5]} />
-          <meshStandardMaterial color="#fafaf9" roughness={0.2} />
+          <meshStandardMaterial color="#27272a" roughness={0.2} metalness={0.4} />
         </mesh>
         <mesh position={[0, 0, 0]}>
           <cylinderGeometry args={[0.18, 0.22, 2.8, 16]} />
-          <meshStandardMaterial color="#fafaf9" roughness={0.2} />
+          <meshStandardMaterial color="#27272a" roughness={0.2} metalness={0.4} />
         </mesh>
         <mesh position={[0, 1.3, 0]}>
           <torusGeometry args={[0.22, 0.04, 8, 24]} />
@@ -559,7 +645,7 @@ function HeavenlyGates() {
         </mesh>
         <mesh position={[0, 1.45, 0]}>
           <boxGeometry args={[0.5, 0.2, 0.5]} />
-          <meshStandardMaterial color="#fafaf9" roughness={0.2} />
+          <meshStandardMaterial color="#27272a" roughness={0.2} metalness={0.4} />
         </mesh>
       </group>
 
@@ -567,11 +653,11 @@ function HeavenlyGates() {
       <group position={[2.2, 1.5, 0]}>
         <mesh position={[0, -1.4, 0]}>
           <boxGeometry args={[0.5, 0.3, 0.5]} />
-          <meshStandardMaterial color="#fafaf9" roughness={0.2} />
+          <meshStandardMaterial color="#27272a" roughness={0.2} metalness={0.4} />
         </mesh>
         <mesh position={[0, 0, 0]}>
           <cylinderGeometry args={[0.18, 0.22, 2.8, 16]} />
-          <meshStandardMaterial color="#fafaf9" roughness={0.2} />
+          <meshStandardMaterial color="#27272a" roughness={0.2} metalness={0.4} />
         </mesh>
         <mesh position={[0, 1.3, 0]}>
           <torusGeometry args={[0.22, 0.04, 8, 24]} />
@@ -583,7 +669,7 @@ function HeavenlyGates() {
         </mesh>
         <mesh position={[0, 1.45, 0]}>
           <boxGeometry args={[0.5, 0.2, 0.5]} />
-          <meshStandardMaterial color="#fafaf9" roughness={0.2} />
+          <meshStandardMaterial color="#27272a" roughness={0.2} metalness={0.4} />
         </mesh>
       </group>
 
@@ -617,7 +703,12 @@ function HeavenlyGates() {
         </mesh>
       </group>
 
-      {/* 7. Volumetric Sun behind the gates */}
+      {/* 7. 3D Cyber Guardian standing atop the stairs at the portal */}
+      <group position={[0, 0.72, 0.4]}>
+        <CyberGuardianFigure />
+      </group>
+
+      {/* 8. Volumetric Sun behind the gates */}
       <group position={[0, 2.2, -4.5]}>
         <mesh>
           <sphereGeometry args={[2.0, 32, 32]} />
@@ -640,7 +731,178 @@ function HeavenlyGates() {
         </group>
       </group>
     </group>
+  );
+}
 
+// ─── Dynamic Atmosphere (Syncs Three.js Fog & Lighting with Scroll Background Fade) ─
+function DynamicAtmosphere({ progressRef }: { progressRef: React.MutableRefObject<number> }) {
+  const { scene } = useThree();
+  const ambientRef = useRef<THREE.AmbientLight>(null);
+  const dirLightRef = useRef<THREE.DirectionalLight>(null);
+
+  // Pre-allocated colors to avoid GC pauses during scroll
+  const skyFog = React.useMemo(() => new THREE.Color("#f0e9f7"), []);
+  const darkFog = React.useMemo(() => new THREE.Color("#070b24"), []); // Rich cosmic navy instead of flat black
+  const currentFog = React.useMemo(() => new THREE.Color("#f0e9f7"), []);
+
+  const skyAmbient = React.useMemo(() => new THREE.Color("#e6e9fc"), []);
+  const darkAmbient = React.useMemo(() => new THREE.Color("#38bdf8"), []); // Luminous cyan ambient in space
+  const currentAmbient = React.useMemo(() => new THREE.Color("#e6e9fc"), []);
+
+  useFrame(() => {
+    const progress = progressRef.current;
+    
+    // Smooth factor between 0.32 and 0.72 (matches Surprise3DSection scrollBlackOpacity)
+    let factor = 0;
+    if (progress > 0.32 && progress < 0.72) {
+      factor = (progress - 0.32) / (0.72 - 0.32);
+    } else if (progress >= 0.72) {
+      factor = 1;
+    }
+
+    // Blend fog color and depth distances
+    currentFog.lerpColors(skyFog, darkFog, factor);
+    if (scene.fog) {
+      scene.fog.color.copy(currentFog);
+      if (scene.fog instanceof THREE.Fog) {
+        scene.fog.near = 8 - 2 * factor; // 8 in sky -> 6 in dark
+        scene.fog.far = 48 - 6 * factor; // 48 in sky -> 42 in dark
+      }
+    }
+
+    // Blend ambient light
+    if (ambientRef.current) {
+      currentAmbient.lerpColors(skyAmbient, darkAmbient, factor);
+      ambientRef.current.color.copy(currentAmbient);
+      ambientRef.current.intensity = 1.6 - 0.4 * factor; // 1.6 in sky -> 1.2 in space
+    }
+
+    // Blend directional light
+    if (dirLightRef.current) {
+      dirLightRef.current.intensity = 6.0 - 1.2 * factor; // 6.0 in sky -> 4.8 in space
+    }
+  });
+
+  return (
+    <>
+      <fog attach="fog" args={["#f0e9f7", 8, 48]} />
+      <ambientLight ref={ambientRef} intensity={1.6} color="#e6e9fc" />
+      <directionalLight ref={dirLightRef} position={[42, 8, -38]} intensity={6.0} color="#ffe29d" />
+    </>
+  );
+}
+
+// ─── Cosmic Starfield (Twinkling star cluster in 3D depth) ───────────────────
+function CosmicStarfield({ progressRef }: { progressRef: React.MutableRefObject<number> }) {
+  const pointsRef = useRef<THREE.Points>(null);
+  const [positions] = useState(() => {
+    const count = 350;
+    const pos = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
+      pos[i * 3] = (Math.random() - 0.5) * 140;
+      pos[i * 3 + 1] = (Math.random() - 0.5) * 50;
+      pos[i * 3 + 2] = -Math.random() * 85 - 5;
+    }
+    return pos;
+  });
+
+  useFrame((_, delta) => {
+    if (!pointsRef.current) return;
+    pointsRef.current.rotation.y += delta * 0.015;
+    // Fade in stars as scroll moves into cosmic space
+    const progress = progressRef.current;
+    const starOpacity = Math.max(0, Math.min(0.9, (progress - 0.28) * 2.2));
+    const mat = pointsRef.current.material as THREE.PointsMaterial;
+    if (mat) {
+      mat.opacity = starOpacity;
+    }
+  });
+
+  return (
+    <points ref={pointsRef}>
+      <bufferGeometry>
+        <bufferAttribute
+          attach="attributes-position"
+          args={[positions, 3]}
+        />
+      </bufferGeometry>
+      <pointsMaterial
+        size={0.7}
+        color="#7dd3fc"
+        transparent
+        opacity={0}
+        blending={THREE.AdditiveBlending}
+        depthWrite={false}
+      />
+    </points>
+  );
+}
+
+// ─── Dynamic Clouds (Morphs from Heavenly Sunset into Cosmic Nebulae) ─────────
+function DynamicClouds({ 
+  cloudsData, 
+  progressRef 
+}: { 
+  cloudsData: CloudData[]; 
+  progressRef: React.MutableRefObject<number>;
+}) {
+  const lightColor = React.useMemo(() => new THREE.Color("#ffffff"), []);
+  const darkColor = React.useMemo(() => new THREE.Color("#1e1b4b"), []); // Cosmic indigo instead of flat gray
+  const currentColor = React.useMemo(() => new THREE.Color("#ffffff"), []);
+
+  const lightEmissive = React.useMemo(() => new THREE.Color("#e5b180"), []);
+  const darkEmissive = React.useMemo(() => new THREE.Color("#0284c7"), []); // Luminous cosmic blue glow
+  const currentEmissive = React.useMemo(() => new THREE.Color("#e5b180"), []);
+
+  // Shared material for high performance batching
+  const sharedMaterial = React.useMemo(() => new THREE.MeshStandardMaterial({
+    color: "#ffffff",
+    opacity: 0.65,
+    transparent: true,
+    roughness: 0.85,
+    metalness: 0.1,
+    emissive: "#e5b180",
+    emissiveIntensity: 0.07,
+  }), []);
+
+  useEffect(() => {
+    return () => {
+      sharedMaterial.dispose();
+    };
+  }, [sharedMaterial]);
+
+  useFrame(() => {
+    const progress = progressRef.current;
+    let factor = 0;
+    if (progress > 0.32 && progress < 0.72) {
+      factor = (progress - 0.32) / (0.72 - 0.32);
+    } else if (progress >= 0.72) {
+      factor = 1;
+    }
+
+    currentColor.lerpColors(lightColor, darkColor, factor);
+    sharedMaterial.color.copy(currentColor);
+
+    currentEmissive.lerpColors(lightEmissive, darkEmissive, factor);
+    sharedMaterial.emissive.copy(currentEmissive);
+    sharedMaterial.emissiveIntensity = 0.07 + 0.35 * factor; // Glows brightly in space!
+
+    sharedMaterial.opacity = 0.65 - 0.15 * factor; // 0.65 -> 0.50
+  });
+
+  return (
+    <group>
+      {cloudsData.map((c) => (
+        <mesh 
+          key={c.id} 
+          position={c.position} 
+          scale={c.scale}
+          material={sharedMaterial}
+        >
+          <sphereGeometry args={[2.2, 16, 16]} />
+        </mesh>
+      ))}
+    </group>
   );
 }
 
@@ -699,40 +961,27 @@ export default function SurpriseCanvas({ scrollProgress }: { scrollProgress: Mot
         camera={{ position: [0, 0, 0], fov: 60, near: 1, far: 1000 }}
         gl={{ antialias: true, alpha: true }}
       >
-        {/* Heavenly Fog - matches peach/lavender sky background */}
-        <fog attach="fog" args={["#f0e9f7", 8, 48]} />
+        {/* Dynamic Atmosphere syncs fog and key lights to the scroll progress */}
+        <DynamicAtmosphere progressRef={progressRef} />
 
-        {/* Lights - soft lavender fill with powerful golden sun highlights */}
-        <ambientLight intensity={1.8} color="#e6e9fc" />
-        <directionalLight position={[42, 8, -38]} intensity={6.5} color="#ffe29d" />
-        <pointLight position={[0, 0, -10]} intensity={2.0} distance={18} color="#fbcfe8" />
-        <pointLight position={[20, 0, -14]} intensity={2.5} distance={18} color="#fef08a" />
-        <pointLight position={[40, 2, -28]} intensity={6.0} distance={25} color="#ffbe3b" />
+        {/* Dynamic point lights positioned along the journey */}
+        <pointLight position={[0, 0, -10]} intensity={2.0} distance={20} color="#fbcfe8" />
+        <pointLight position={[20, 0, -14]} intensity={2.8} distance={20} color="#fef08a" />
+        <pointLight position={[40, 2, -28]} intensity={7.0} distance={30} color="#ffbe3b" />
 
-        {/* Clouds rendered as standard material spheres reacting to lighting direction */}
-        {cloudsData.map((c) => (
-          <mesh key={c.id} position={c.position} scale={c.scale}>
-            <sphereGeometry args={[2.2, 16, 16]} />
-            <meshStandardMaterial 
-              color={c.color} 
-              opacity={c.opacity * 0.7} 
-              transparent 
-              roughness={0.92} 
-              metalness={0.02} 
-              emissive="#e5b180"
-              emissiveIntensity={0.06}
-            />
-          </mesh>
-        ))}
+        {/* Dynamic clouds that shift with the sky-to-dark transition */}
+        <DynamicClouds cloudsData={cloudsData} progressRef={progressRef} />
 
+        {/* 3D Cosmic Starfield that illuminates deep space */}
+        <CosmicStarfield progressRef={progressRef} />
 
         {/* Main Golden Spline Curve Track (Rendered as glowing golden energy line) */}
         <mesh>
-          <tubeGeometry args={[splineCurve, 100, 0.08, 8, false]} />
+          <tubeGeometry args={[splineCurve, 100, 0.09, 8, false]} />
           <meshStandardMaterial 
             color="#fbbf24" 
             emissive="#fbbf24" 
-            emissiveIntensity={1.8} 
+            emissiveIntensity={2.2} 
             roughness={0.1} 
             metalness={0.9} 
           />

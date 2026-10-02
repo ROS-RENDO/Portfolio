@@ -72,8 +72,11 @@ export default function Surprise3DSection() {
   const transitionOpacity = useTransform(smoothProgress, [0, 0.04, 0.11, 0.16], [0, 1, 1, 0]);
   const transitionScale = useTransform(smoothProgress, [0, 0.10, 0.16], [0.9, 1, 3.5]);
 
-  // Dark overlay opacity fade: goes from 1.0 down to 0.0 when transition finishes
-  const darkBackgroundOpacity = useTransform(smoothProgress, [0.10, 0.18], [1, 0]);
+  // Initial entry dark overlay: fades from 1.0 down to 0.0 between [0.08, 0.16] to reveal normal sky background
+  const entryDarkOpacity = useTransform(smoothProgress, [0.08, 0.16], [1, 0]);
+
+  // Scroll-following black background fade: begins at 0.32 and smoothly deepens into black by 0.72
+  const scrollBlackOpacity = useTransform(smoothProgress, [0.32, 0.72], [0, 1]);
 
   // 3. Fading grid scene opacity
   const spaceOpacity = useTransform(smoothProgress, [0.12, 0.18, 0.95, 0.98], [0, 1, 1, 0]);
@@ -83,7 +86,7 @@ export default function Surprise3DSection() {
   const finalY = useTransform(smoothProgress, [0.95, 0.98], [100, 0]);
 
   // 5. Hide Navbar (z-50) and NeonStick (z-40) dynamically when Surprise starts
-  const zIndex = useTransform(smoothProgress, (p) => p > 0.04 ? 60 : 10);
+  const zIndex = useTransform(smoothProgress, (p) => p > 0.01 ? 60 : 40);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -160,13 +163,33 @@ export default function Surprise3DSection() {
         style={{ zIndex }}
       >
         
-        {/* Layer 1: Ethereal Light Heaven Sky Background (Always behind) */}
-        <div className="absolute inset-0 bg-gradient-to-tr from-pink-100 via-purple-50 to-sky-100 z-0"></div>
+        {/* Layer 0: Normal Base Background (Dreamy pastel sky: soft pink/lavender/sky gradient) */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-pink-100 via-purple-50 to-sky-100 z-0" />
 
-        {/* Layer 2: Dark Background Transition Overlay (Fades out to reveal sky) */}
+        {/* Layer 1: Scroll-following Black Fade Overlay (Fades in to deep #09090b as user scrolls along track) */}
+        {/* Layer 1: Cosmic Space Background Fade with Rich Nebulae */}
+        <motion.div 
+          className="absolute inset-0 bg-gradient-to-b from-[#050818] via-[#090d28] to-[#050716] z-[5] pointer-events-none"
+          style={{ opacity: scrollBlackOpacity }}
+        >
+          {/* Vivid Cosmic Radial Nebulae */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(6,182,212,0.25),transparent_65%)] pointer-events-none" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_60%,rgba(245,158,11,0.22),transparent_55%)] pointer-events-none" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_75%,rgba(168,85,247,0.2),transparent_60%)] pointer-events-none" />
+          {/* Subtle Cyber Perspective Grid for ground orientation */}
+          <div 
+            className="absolute inset-0 opacity-15"
+            style={{
+              backgroundImage: `linear-gradient(to right, rgba(56, 189, 248, 0.3) 1px, transparent 1px), linear-gradient(to bottom, rgba(168, 85, 247, 0.3) 1px, transparent 1px)`,
+              backgroundSize: "48px 48px",
+            }}
+          />
+        </motion.div>
+
+        {/* Layer 2: Initial Glitch Dark Overlay (Fades out at entry to reveal the normal background) */}
         <motion.div 
           className="absolute inset-0 bg-[#09090b] z-10 pointer-events-none"
-          style={{ opacity: darkBackgroundOpacity }}
+          style={{ opacity: entryDarkOpacity }}
         />
 
         {/* Phase 1: Glitch Surprise Reveal Overlay (Dark background) */}
@@ -183,7 +206,7 @@ export default function Surprise3DSection() {
             </p>
             <div className="w-16 h-[2px] bg-gradient-to-r from-transparent via-rose-400 to-transparent mx-auto mt-4 animate-pulse"></div>
             <div className="text-[10px] font-mono text-zinc-600 uppercase tracking-widest pt-12 animate-pulse flex items-center justify-center gap-2">
-              <span>Scroll down to enter heaven</span>
+              <span>Scroll down to explore the timeline</span>
               <FiChevronRight size={10} className="rotate-90" />
             </div>
           </div>
@@ -197,36 +220,36 @@ export default function Surprise3DSection() {
           {isMounted && <SurpriseCanvas scrollProgress={smoothProgress} />}
         </motion.div>
 
-        {/* Phase 3: Outro Screen & Contact Form (Light Theme) */}
+        {/* Phase 3: Outro Screen & Contact Form (Dark Cyberpunk Theme) */}
         <motion.div
-          className="absolute inset-0 z-30 flex flex-col items-center justify-center px-6 bg-gradient-to-b from-purple-50/50 via-pink-100 to-indigo-100"
+          className="absolute inset-0 z-30 flex flex-col items-center justify-center px-6 bg-gradient-to-b from-[#09090b]/85 via-[#0c0d12]/95 to-[#09090b] backdrop-blur-xl"
           style={{ 
             opacity: finalOpacity, 
             y: finalY,
             pointerEvents: useTransform(smoothProgress, (p) => p > 0.96 ? "auto" : "none")
           }}
         >
-          {/* Cloud silhouettes at bottom of Outro */}
-          <div className="absolute bottom-0 left-0 right-0 h-44 bg-gradient-to-t from-white to-transparent pointer-events-none -z-10"></div>
+          {/* Subtle cyan glow line at bottom of Outro */}
+          <div className="absolute bottom-0 left-0 right-0 h-44 bg-gradient-to-t from-cyan-500/5 to-transparent pointer-events-none -z-10"></div>
           
           <div className="max-w-3xl text-center space-y-6 md:space-y-8 relative z-10">
-            <div className="font-mono text-pink-600 text-xs md:text-sm font-bold tracking-widest uppercase">
+            <div className="font-mono text-cyan-400 text-xs md:text-sm font-bold tracking-widest uppercase">
               06. NEXT ADVENTURE
             </div>
             
-            <h2 className="text-4xl md:text-6xl font-space-grotesk font-black text-indigo-950 tracking-tighter leading-none">
-              Let&apos;s Build <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-indigo-600">Something</span> Extraordinary
+            <h2 className="text-4xl md:text-6xl font-space-grotesk font-black text-white tracking-tighter leading-none">
+              Let&apos;s Build <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-400 to-indigo-400">Something</span> Extraordinary
             </h2>
             
-            <p className="text-sm md:text-base text-slate-600 font-medium leading-relaxed max-w-xl mx-auto">
+            <p className="text-sm md:text-base text-zinc-400 font-medium leading-relaxed max-w-xl mx-auto">
               I am always looking for challenging architectures, innovative AI projects, and opportunities to scale production setups. Let&apos;s turn complex ideas into refined code.
             </p>
 
             {/* Contact Action Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
               <a
-                href="mailto:hello@example.com"
-                className="w-full sm:w-auto px-8 py-3.5 rounded-full font-space-grotesk font-bold bg-indigo-950 text-white hover:bg-indigo-900 transition-all shadow-[0_4px_20px_rgba(30,27,75,0.25)] hover:shadow-[0_4px_30px_rgba(30,27,75,0.4)] flex items-center justify-center gap-2"
+                href="mailto:contact@rosrendo.dev"
+                className="w-full sm:w-auto px-8 py-3.5 rounded-full font-space-grotesk font-bold bg-cyan-500 text-black hover:bg-cyan-400 transition-all shadow-[0_4px_20px_rgba(6,182,212,0.25)] hover:shadow-[0_4px_30px_rgba(6,182,212,0.4)] flex items-center justify-center gap-2"
               >
                 <FiMail size={18} />
                 <span>Shoot an Email</span>
@@ -234,19 +257,19 @@ export default function Surprise3DSection() {
 
               <div className="flex items-center gap-3">
                 <a
-                  href="#"
+                  href="https://github.com/ROS-RENDO"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-3 rounded-full border border-slate-200 bg-white text-slate-500 hover:text-indigo-950 hover:border-slate-400 transition-colors shadow-sm"
+                  className="p-3 rounded-full border border-zinc-800 bg-zinc-900/60 text-zinc-400 hover:text-white hover:border-zinc-600 transition-colors shadow-sm"
                   aria-label="GitHub"
                 >
                   <FiGithub size={20} />
                 </a>
                 <a
-                  href="#"
+                  href="https://linkedin.com/in/ROS-RENDO"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-3 rounded-full border border-slate-200 bg-white text-slate-500 hover:text-[#0077B5] hover:border-slate-400 transition-colors shadow-sm"
+                  className="p-3 rounded-full border border-zinc-800 bg-zinc-900/60 text-zinc-400 hover:text-[#06b6d4] hover:border-zinc-600 transition-colors shadow-sm"
                   aria-label="LinkedIn"
                 >
                   <FiLinkedin size={20} />
@@ -255,7 +278,7 @@ export default function Surprise3DSection() {
                 {/* Back to Top CTA */}
                 <button
                   onClick={scrollToTop}
-                  className="p-3 rounded-full border border-slate-200 bg-white text-slate-500 hover:text-rose-500 hover:border-rose-300 transition-colors flex items-center justify-center shadow-sm cursor-pointer group"
+                  className="p-3 rounded-full border border-zinc-800 bg-zinc-900/60 text-zinc-400 hover:text-cyan-400 hover:border-cyan-500/50 transition-colors flex items-center justify-center shadow-sm cursor-pointer group"
                   title="Scroll to Top"
                 >
                   <FiArrowUp size={20} className="group-hover:-translate-y-0.5 transition-transform" />
@@ -265,10 +288,10 @@ export default function Surprise3DSection() {
 
             {/* Final Footer Credits */}
             <div className="pt-20 text-center">
-              <p className="font-space-grotesk text-xs text-slate-500 font-semibold">
-                Designed & Built by <span className="text-indigo-950 font-bold">Ros Rendo</span> &copy; {new Date().getFullYear()}
+              <p className="font-space-grotesk text-xs text-zinc-500 font-semibold">
+                Designed & Built by <span className="text-white font-bold">Ros Rendo</span> &copy; {new Date().getFullYear()}
               </p>
-              <p className="font-mono text-[9px] text-slate-400 uppercase tracking-widest mt-1">
+              <p className="font-mono text-[9px] text-zinc-600 uppercase tracking-widest mt-1">
                 SYSTEM_END // PORTAL_IDLE
               </p>
             </div>

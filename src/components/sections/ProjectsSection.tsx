@@ -469,185 +469,416 @@ function ProjectVisualPreview({ type, accent }: { type: string; accent: string }
     switch (type) {
       case "map":
         return (
-          <div className="relative w-full h-full flex items-center justify-center">
-            <div className="absolute left-[25%] top-[50%] -translate-y-1/2 flex items-center justify-center">
-              <span className="absolute h-3 w-3 rounded-full bg-cyan-400/40 animate-ping" />
-              <span className="relative h-1.5 w-1.5 rounded-full bg-cyan-400" />
-            </div>
-            <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
-              <path d="M 50,56 Q 100,20 150,56" fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="1.5" strokeDasharray="3,3" />
-              <circle r="3" fill="#a855f7" className="animate-pulse">
-                <animateMotion dur="3s" repeatCount="indefinite" path="M 50,56 Q 100,20 150,56" />
-              </circle>
+          <div className="relative w-full h-full flex flex-col justify-between p-3 overflow-hidden select-none">
+            {/* Map Street Grid Backdrop */}
+            <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] bg-[size:12px_12px]" />
+            <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-20" xmlns="http://www.w3.org/2000/svg">
+              <path d="M 20,20 L 120,45 L 240,30 L 340,75" stroke="#38bdf8" strokeWidth="1.5" fill="none" />
+              <path d="M 60,110 L 160,80 L 280,100" stroke="#38bdf8" strokeWidth="1.5" fill="none" />
+              <path d="M 120,45 L 160,80" stroke="#38bdf8" strokeWidth="1.5" fill="none" strokeDasharray="3,3" />
             </svg>
-            <div className="absolute right-[25%] top-[50%] -translate-y-1/2 flex items-center justify-center">
-              <span className="absolute h-3 w-3 rounded-full bg-purple-400/40 animate-ping" />
-              <span className="relative h-1.5 w-1.5 rounded-full bg-purple-400" />
+
+            {/* Top Telemetry Bar */}
+            <div className="relative z-10 flex items-center justify-between text-[9px] font-mono">
+              <span className="flex items-center gap-1.5 text-cyan-400 font-bold bg-cyan-950/60 border border-cyan-800/60 px-2 py-0.5 rounded-full">
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
+                <span>PHNOM PENH // DISPATCH ACTIVE</span>
+              </span>
+              <span className="text-zinc-500 bg-zinc-900/80 px-2 py-0.5 rounded border border-zinc-800">
+                ETA: 4 MIN
+              </span>
+            </div>
+
+            {/* Interactive Map Visual with Animated Vehicle Route */}
+            <div className="relative z-10 w-full flex-1 flex items-center justify-between px-6">
+              {/* Customer Pin */}
+              <div className="flex flex-col items-center">
+                <span className="text-rose-400 text-sm animate-bounce">📍</span>
+                <span className="text-[7px] font-mono text-zinc-400 bg-zinc-900/90 px-1 rounded border border-zinc-800">Customer</span>
+              </div>
+
+              {/* Animated Route Line */}
+              <div className="flex-1 mx-3 relative h-6 flex items-center">
+                <div className="w-full h-0.5 border-t-2 border-dashed border-cyan-500/40" />
+                <motion.div
+                  animate={{ left: ["0%", "82%", "0%"] }}
+                  transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                  className="absolute -top-2 flex items-center gap-1 bg-cyan-500/20 border border-cyan-400/50 px-1.5 py-0.5 rounded-full backdrop-blur-sm"
+                >
+                  <span className="text-xs">🚗</span>
+                  <span className="text-[7px] font-mono text-cyan-300 font-bold hidden sm:inline">1.2km</span>
+                </motion.div>
+              </div>
+
+              {/* Provider Destination Node */}
+              <div className="flex flex-col items-center">
+                <div className="w-6 h-6 rounded-full border border-emerald-500/50 bg-emerald-500/10 flex items-center justify-center text-xs">
+                  🧹
+                </div>
+                <span className="text-[7px] font-mono text-emerald-400 bg-zinc-900/90 px-1 rounded border border-zinc-800 mt-0.5">CleanPro</span>
+              </div>
+            </div>
+
+            {/* Bottom Status Pill */}
+            <div className="relative z-10 flex items-center justify-between text-[8px] font-mono text-zinc-500 pt-1 border-t border-zinc-900">
+              <span className="text-emerald-400 font-semibold flex items-center gap-1">
+                <span className="w-1 h-1 rounded-full bg-emerald-400" />
+                Stripe Escrow Locked
+              </span>
+              <span>WS_COORDS: [11.5564, 104.9282]</span>
             </div>
           </div>
         );
+
       case "chart":
         return (
-          <div className="w-full h-full flex flex-col justify-end px-8 pb-3 pt-3">
-            <div className="flex items-end justify-between h-16 w-full gap-1">
+          <div className="relative w-full h-full flex flex-col justify-between p-3 overflow-hidden select-none">
+            {/* Top Market Bar */}
+            <div className="flex items-center justify-between text-[9px] font-mono border-b border-zinc-900 pb-1">
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-white">XAUUSD</span>
+                <span className="text-amber-500 text-[8px] bg-amber-500/10 border border-amber-500/20 px-1 rounded">M15</span>
+                <span className="text-emerald-400 font-bold">$2,348.60</span>
+              </div>
+              <span className="text-emerald-400 text-[8px] bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded flex items-center gap-1">
+                <span className="w-1 h-1 rounded-full bg-emerald-400 animate-pulse" />
+                ▲ +2.48%
+              </span>
+            </div>
+
+            {/* Candlestick Visualization */}
+            <div className="flex items-end justify-between h-14 w-full gap-1.5 px-2 relative my-1">
+              {/* Dotted Take-Profit Line */}
+              <div className="absolute left-0 right-0 top-3 border-t border-dashed border-emerald-500/30 flex justify-end">
+                <span className="text-[7px] font-mono text-emerald-500 bg-zinc-950 px-1">TP 2,352.00</span>
+              </div>
+
               {[
-                { h: 20, up: true },
-                { h: 35, up: true },
-                { h: 18, up: false },
-                { h: 48, up: true },
-                { h: 28, up: false },
-                { h: 42, up: true }
-              ].map((bar, i) => (
+                { h: 24, up: true, wick: 32 },
+                { h: 18, up: false, wick: 28 },
+                { h: 36, up: true, wick: 44 },
+                { h: 22, up: false, wick: 30 },
+                { h: 42, up: true, wick: 50 },
+                { h: 30, up: true, wick: 38 },
+                { h: 48, up: true, wick: 54 },
+              ].map((c, i) => (
                 <div key={i} className="flex flex-col items-center flex-1 h-full justify-end relative">
-                  <div className={`w-[1px] absolute top-1 bottom-1 ${bar.up ? "bg-emerald-500/30" : "bg-rose-500/30"}`} style={{ height: `${bar.h + 6}px` }} />
+                  {/* Candle Wick */}
+                  <div 
+                    className={`w-[1px] absolute ${c.up ? "bg-emerald-500/50" : "bg-rose-500/50"}`} 
+                    style={{ height: `${c.wick}px`, bottom: "4px" }} 
+                  />
+                  {/* Candle Body */}
                   <motion.div
-                    animate={{ height: [`${bar.h - 5}px`, `${bar.h + 5}px`, `${bar.h - 5}px`] }}
-                    transition={{ repeat: Infinity, duration: 2 + i * 0.3, ease: "easeInOut" }}
-                    className={`w-full max-w-[6px] rounded-sm relative z-10 ${bar.up ? "bg-emerald-500/80 shadow-[0_0_6px_rgba(16,185,129,0.3)]" : "bg-rose-500/80 shadow-[0_0_6px_rgba(239,68,68,0.3)]"}`}
+                    animate={{ height: [`${c.h - 3}px`, `${c.h + 3}px`, `${c.h - 3}px`] }}
+                    transition={{ repeat: Infinity, duration: 2 + i * 0.25, ease: "easeInOut" }}
+                    className={`w-full max-w-[8px] rounded-[1px] relative z-10 ${
+                      c.up 
+                        ? "bg-emerald-500 border border-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.3)]" 
+                        : "bg-rose-500 border border-rose-400 shadow-[0_0_8px_rgba(244,63,94,0.3)]"
+                    }`}
                   />
                 </div>
               ))}
             </div>
-          </div>
-        );
-      case "nodes":
-        return (
-          <div className="relative w-full h-full flex items-center justify-center">
-            <div className="absolute h-7 w-7 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-[8px] text-zinc-500 font-mono shadow-inner">
-              AI
+
+            {/* Bottom Volume Indicator */}
+            <div className="flex items-center justify-between text-[7px] font-mono text-zinc-500 border-t border-zinc-900 pt-1">
+              <span>VOL: 14.8K LOTS</span>
+              <span className="text-cyan-400 font-bold">ALGO_STRATEGY // ACTIVE BUY</span>
             </div>
-            <svg className="absolute inset-0 w-full h-full pointer-events-none">
-              <line x1="110" y1="56" x2="60" y2="35" stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="3,3" />
-              <line x1="110" y1="56" x2="160" y2="35" stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="3,3" />
-              <line x1="110" y1="56" x2="110" y2="85" stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="3,3" />
-            </svg>
-            <div className="absolute left-[20%] top-[25%] h-4 px-1 rounded-full border border-cyan-500/10 bg-cyan-500/5 text-[7px] font-mono text-cyan-400/80 flex items-center justify-center">React</div>
-            <div className="absolute right-[20%] top-[25%] h-4 px-1 rounded-full border border-purple-500/10 bg-purple-500/5 text-[7px] font-mono text-purple-400/80 flex items-center justify-center">Node</div>
-            <div className="absolute bottom-[20%] h-4 px-1 rounded-full border border-rose-500/10 bg-rose-500/5 text-[7px] font-mono text-rose-400/80 flex items-center justify-center">LLM</div>
-            <span className="absolute h-1.5 w-1.5 rounded-full bg-purple-400 animate-ping" />
           </div>
         );
+
       case "yolo":
         return (
-          <div className="relative w-full h-full flex items-center justify-center">
-            <div className="border border-rose-500/50 bg-rose-500/5 rounded p-1 w-20 h-12 relative flex flex-col justify-between">
-              <span className="absolute top-0 left-0 bg-rose-500/80 text-white font-mono text-[6px] px-1 py-0.5 leading-none rounded-br">Obj: 98%</span>
-              <div className="w-full h-full flex items-center justify-center opacity-25">
-                <svg className="w-8 h-8 text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
-                  <path d="M12 14c3.31 0 6-2.69 6-6s-2.69-6-6-6-6 2.69-6 6 2.69 6 6 6zm0 2c-4.42 0-8 3.58-8 8h16c0-4.42-3.58-8-8-8z" />
-                </svg>
+          <div className="relative w-full h-full flex flex-col justify-between p-3 overflow-hidden select-none font-mono">
+            {/* Viewfinder Corner Reticles */}
+            <div className="absolute top-2 left-2 w-2.5 h-2.5 border-t-2 border-l-2 border-rose-500" />
+            <div className="absolute top-2 right-2 w-2.5 h-2.5 border-t-2 border-r-2 border-rose-500" />
+            <div className="absolute bottom-2 left-2 w-2.5 h-2.5 border-b-2 border-l-2 border-rose-500" />
+            <div className="absolute bottom-2 right-2 w-2.5 h-2.5 border-b-2 border-r-2 border-rose-500" />
+
+            {/* Sweeping Laser Scanner */}
+            <motion.div
+              animate={{ top: ["8%", "88%", "8%"] }}
+              transition={{ repeat: Infinity, duration: 2.2, ease: "easeInOut" }}
+              className="absolute left-2 right-2 h-[1px] bg-gradient-to-r from-transparent via-rose-400 to-transparent shadow-[0_0_8px_#f43f5e] z-20 pointer-events-none"
+            />
+
+            {/* Top Status */}
+            <div className="relative z-10 flex items-center justify-between text-[8px]">
+              <span className="text-rose-400 font-bold flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping" />
+                CAM_01 // LIVE INFERENCE
+              </span>
+              <span className="text-zinc-500">60.2 FPS</span>
+            </div>
+
+            {/* Object Detection Target Bounding Boxes */}
+            <div className="relative z-10 flex items-center justify-around py-1">
+              {/* Target 1 */}
+              <div className="border border-rose-500/80 bg-rose-500/10 rounded p-1 w-28 h-14 relative flex flex-col justify-between shadow-[0_0_12px_rgba(244,63,94,0.15)]">
+                <span className="absolute -top-2 left-1 bg-rose-600 text-white text-[7px] font-bold px-1 rounded">
+                  person: 98.4%
+                </span>
+                <div className="w-full flex-1 flex items-center justify-center text-rose-300/40 text-xs">
+                  👤
+                </div>
+                <span className="text-[6px] text-zinc-400 text-right">BBOX [142, 88]</span>
+              </div>
+
+              {/* Target 2 */}
+              <div className="border border-cyan-500/80 bg-cyan-500/10 rounded p-1 w-20 h-12 relative flex flex-col justify-between shadow-[0_0_12px_rgba(6,182,212,0.15)]">
+                <span className="absolute -top-2 left-1 bg-cyan-600 text-white text-[7px] font-bold px-1 rounded">
+                  tool: 94.1%
+                </span>
+                <div className="w-full flex-1 flex items-center justify-center text-cyan-300/40 text-xs">
+                  🔧
+                </div>
+                <span className="text-[6px] text-zinc-400 text-right">24ms</span>
               </div>
             </div>
-            <motion.div
-              animate={{ top: ["15%", "85%", "15%"] }}
-              transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-              className="absolute left-0 right-0 h-[1px] bg-rose-400 shadow-[0_0_6px_#f43f5e] z-10"
-            />
+
+            {/* Bottom Telemetry */}
+            <div className="relative z-10 flex items-center justify-between text-[7px] text-zinc-500 border-t border-zinc-900 pt-1">
+              <span>YOLOv8x // TENSORRT FP16</span>
+              <span className="text-emerald-400">STATUS: ZERO_DROP</span>
+            </div>
           </div>
         );
+
       case "k8s":
         return (
-          <div className="relative w-full h-full flex items-center justify-center gap-4">
-            {[0, 1, 2].map((idx) => (
-              <div key={idx} className="flex flex-col items-center gap-1">
-                <div className="w-7 h-9 rounded border border-zinc-800 bg-zinc-900/90 flex flex-col justify-between p-1">
-                  <div className="flex gap-0.5">
-                    <div className="w-1 h-0.5 bg-zinc-700 rounded-sm" />
-                    <div className="w-1 h-0.5 bg-zinc-700 rounded-sm" />
+          <div className="relative w-full h-full flex flex-col justify-between p-3 overflow-hidden select-none font-mono">
+            {/* Top Cluster Header */}
+            <div className="flex items-center justify-between text-[8px] border-b border-zinc-900 pb-1">
+              <span className="text-emerald-400 font-bold flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                K8S CLUSTER // AUTONOMOUS OPERATOR
+              </span>
+              <span className="text-zinc-500">PROMETHEUS 2.45</span>
+            </div>
+
+            {/* 3 Server Blades Simulation */}
+            <div className="grid grid-cols-3 gap-2 my-1">
+              {[
+                { name: "node-01", status: "HEALTHY", cpu: "38%", color: "text-emerald-400", border: "border-emerald-500/30" },
+                { name: "node-02", status: "HEALTHY", cpu: "44%", color: "text-emerald-400", border: "border-emerald-500/30" },
+                { name: "node-03", status: "AUTO-HEALED", cpu: "29%", color: "text-cyan-400", border: "border-cyan-500/30" },
+              ].map((n, idx) => (
+                <div key={idx} className={`p-1.5 rounded-lg border ${n.border} bg-zinc-900/80 flex flex-col justify-between`}>
+                  <div className="flex items-center justify-between text-[7px]">
+                    <span className="text-white font-bold">{n.name}</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                   </div>
-                  <div className="flex justify-end">
-                    {idx === 2 ? (
-                      <motion.span
-                        animate={{ backgroundColor: ["#f59e0b", "#f43f5e", "#10b981"] }}
-                        transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                        className="h-1 w-1 rounded-full"
-                      />
-                    ) : (
-                      <span className="h-1 w-1 rounded-full bg-emerald-500 animate-pulse" />
-                    )}
+                  <div className="w-full bg-zinc-950 h-1 rounded-full my-1 overflow-hidden">
+                    <div className="bg-emerald-500 h-full rounded-full" style={{ width: n.cpu }} />
+                  </div>
+                  <div className="flex items-center justify-between text-[6px] text-zinc-500">
+                    <span className={n.color}>{n.status}</span>
+                    <span>{n.cpu}</span>
                   </div>
                 </div>
-                <span className="font-mono text-[7px] text-zinc-600">N {idx+1}</span>
-              </div>
-            ))}
-          </div>
-        );
-      case "house":
-        return (
-          <div className="relative w-full h-full flex flex-col items-center justify-center gap-1.5 pt-1">
-            <svg className="w-9 h-9 text-sky-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-            </svg>
-            <div className="w-1/2 h-1 bg-zinc-900 rounded-full border border-zinc-800 relative overflow-hidden">
-              <motion.div
-                animate={{ left: ["0%", "100%", "0%"] }}
-                transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
-                className="absolute top-0 bottom-0 w-3 bg-sky-500 rounded-full"
-              />
+              ))}
+            </div>
+
+            {/* Bottom Health Signal */}
+            <div className="flex items-center justify-between text-[7px] text-zinc-500 border-t border-zinc-900 pt-1">
+              <span>CONTROLLER_LOOP: 50ms</span>
+              <span className="text-emerald-400 font-bold">REMEDIATION: &lt; 90s</span>
             </div>
           </div>
         );
+
       case "agents":
         return (
-          <div className="relative w-full h-full flex items-center justify-center">
-            <svg className="w-full h-full absolute inset-0">
-              <polygon points="110,25 75,75 145,75" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
-            </svg>
-            <div className="absolute top-[18px] h-4 px-1 rounded border border-purple-500/10 bg-purple-500/5 text-[6px] font-mono text-purple-400">Planner</div>
-            <div className="absolute left-[20%] bottom-[20%] h-4 px-1 rounded border border-fuchsia-500/10 bg-fuchsia-500/5 text-[6px] font-mono text-fuchsia-400">Coder</div>
-            <div className="absolute right-[20%] bottom-[20%] h-4 px-1 rounded border border-cyan-500/10 bg-cyan-500/5 text-[6px] font-mono text-cyan-400">QA</div>
-            <span className="absolute h-1.5 w-1.5 rounded-full bg-fuchsia-400 animate-pulse" />
+          <div className="relative w-full h-full flex flex-col justify-between p-3 overflow-hidden select-none font-mono">
+            {/* Top Multi-Agent Header */}
+            <div className="flex items-center justify-between text-[8px] border-b border-zinc-900 pb-1">
+              <span className="text-fuchsia-400 font-bold flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-fuchsia-400 animate-pulse" />
+                LANGGRAPH PIPELINE // 3 AGENTS
+              </span>
+              <span className="text-zinc-500">EXEC_ID #892</span>
+            </div>
+
+            {/* Agent Directed Graph Nodes */}
+            <div className="flex items-center justify-between px-2 my-1 relative">
+              {/* Connector SVG Line */}
+              <svg className="absolute inset-0 w-full h-full pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+                <line x1="20%" y1="50%" x2="50%" y2="50%" stroke="rgba(217,70,239,0.3)" strokeWidth="1.5" strokeDasharray="3,3" />
+                <line x1="50%" y1="50%" x2="80%" y2="50%" stroke="rgba(6,182,212,0.3)" strokeWidth="1.5" strokeDasharray="3,3" />
+              </svg>
+
+              <div className="relative z-10 flex flex-col items-center">
+                <div className="w-8 h-8 rounded-full border border-purple-500 bg-purple-950/80 flex items-center justify-center text-xs shadow-md">
+                  🧠
+                </div>
+                <span className="text-[7px] text-purple-300 font-bold mt-1">Planner</span>
+              </div>
+
+              <div className="relative z-10 flex flex-col items-center">
+                <div className="w-8 h-8 rounded-full border border-fuchsia-500 bg-fuchsia-950/80 flex items-center justify-center text-xs shadow-md">
+                  🔍
+                </div>
+                <span className="text-[7px] text-fuchsia-300 font-bold mt-1">Research</span>
+              </div>
+
+              <div className="relative z-10 flex flex-col items-center">
+                <div className="w-8 h-8 rounded-full border border-cyan-500 bg-cyan-950/80 flex items-center justify-center text-xs shadow-md">
+                  💻
+                </div>
+                <span className="text-[7px] text-cyan-300 font-bold mt-1">Coder</span>
+              </div>
+            </div>
+
+            {/* Bottom Log Feed */}
+            <div className="text-[7px] text-zinc-500 border-t border-zinc-900 pt-1 flex items-center justify-between">
+              <span className="text-fuchsia-400">[ORCHESTRATION] State verified</span>
+              <span>TOKEN_USE: 4.2k</span>
+            </div>
           </div>
         );
+
       case "waveform":
         return (
-          <div className="w-full h-full flex items-center justify-center gap-1 px-12">
-            {[1, 1.8, 1.4, 2.2, 1.2, 1.6, 2].map((speed, i) => (
-              <motion.div
-                key={i}
-                animate={{ height: ["10%", "80%", "10%"] }}
-                transition={{ repeat: Infinity, duration: speed, ease: "easeInOut" }}
-                className="w-1 bg-indigo-500 rounded-full"
-              />
-            ))}
+          <div className="relative w-full h-full flex flex-col justify-between p-3 overflow-hidden select-none font-mono">
+            {/* Top AI Audio Header */}
+            <div className="flex items-center justify-between text-[8px] border-b border-zinc-900 pb-1">
+              <span className="text-indigo-400 font-bold flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-ping" />
+                JARVIS CORE // VOICE SYNTHESIS
+              </span>
+              <span className="text-emerald-400 font-semibold">ALWAYS-ON</span>
+            </div>
+
+            {/* Holographic Voice Waveform Centerpiece */}
+            <div className="flex items-center justify-center gap-1.5 h-12 my-1">
+              {[12, 28, 42, 18, 52, 34, 46, 20, 38, 14].map((h, i) => (
+                <motion.div
+                  key={i}
+                  animate={{ height: [`${Math.max(6, h * 0.25)}px`, `${h}px`, `${Math.max(6, h * 0.25)}px`] }}
+                  transition={{ repeat: Infinity, duration: 0.8 + (i % 3) * 0.2, ease: "easeInOut" }}
+                  className="w-1.5 bg-gradient-to-t from-indigo-600 via-sky-400 to-cyan-300 rounded-full shadow-[0_0_6px_rgba(99,102,241,0.5)]"
+                />
+              ))}
+            </div>
+
+            {/* Bottom Voice Command Transcription */}
+            <div className="text-[7px] text-zinc-400 border-t border-zinc-900 pt-1 flex items-center justify-between">
+              <span className="text-cyan-400">&ldquo;Hey JARVIS, deploy production cluster&rdquo;</span>
+              <span className="text-emerald-400 font-bold">200 OK</span>
+            </div>
           </div>
         );
+
+      case "house":
+        return (
+          <div className="relative w-full h-full flex flex-col justify-between p-3 overflow-hidden select-none font-mono">
+            {/* Top Real Estate Header */}
+            <div className="flex items-center justify-between text-[8px] border-b border-zinc-900 pb-1">
+              <span className="text-sky-400 font-bold flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
+                ESTATE AI // VALUATION MODEL
+              </span>
+              <span className="text-zinc-500">MAPBOX GL</span>
+            </div>
+
+            {/* Architecture Card with AI Valuation */}
+            <div className="flex items-center justify-between px-3 my-1">
+              <div className="text-3xl">🏡</div>
+              <div className="space-y-0.5 text-right">
+                <div className="text-[11px] font-bold text-white font-space-grotesk">$425,000</div>
+                <div className="text-[7px] text-emerald-400 font-bold">AI VALUATION: 94% ACCURACY</div>
+                <div className="text-[7px] text-zinc-500">4 Bed · 3 Bath · 2,400 sqft</div>
+              </div>
+            </div>
+
+            {/* Bottom Telemetry */}
+            <div className="text-[7px] text-zinc-500 border-t border-zinc-900 pt-1 flex items-center justify-between">
+              <span>MORTGAGE_CALC: $2,180/MO</span>
+              <span className="text-sky-400 font-bold">ES-LISTING VERIFIED</span>
+            </div>
+          </div>
+        );
+
+      case "nodes":
+        return (
+          <div className="relative w-full h-full flex flex-col justify-between p-3 overflow-hidden select-none font-mono">
+            <div className="flex items-center justify-between text-[8px] border-b border-zinc-900 pb-1">
+              <span className="text-cyan-400 font-bold">DISTRIBUTED BACKEND ARCHITECTURE</span>
+              <span className="text-emerald-400">HEALTHY</span>
+            </div>
+            <div className="flex items-center justify-around py-2">
+              <div className="px-2 py-1 bg-zinc-900 rounded border border-zinc-800 text-[8px] text-white">Next.js</div>
+              <span className="text-cyan-500">&rarr;</span>
+              <div className="px-2 py-1 bg-zinc-900 rounded border border-cyan-800 text-[8px] text-cyan-400">NestJS</div>
+              <span className="text-purple-500">&rarr;</span>
+              <div className="px-2 py-1 bg-zinc-900 rounded border border-purple-800 text-[8px] text-purple-400">Redis</div>
+              <span className="text-emerald-500">&rarr;</span>
+              <div className="px-2 py-1 bg-zinc-900 rounded border border-emerald-800 text-[8px] text-emerald-400">PostgreSQL</div>
+            </div>
+            <div className="text-[7px] text-zinc-500 border-t border-zinc-900 pt-1 flex justify-between">
+              <span>LATENCY: 24ms</span>
+              <span className="text-cyan-400">HTTP/2 STREAMING</span>
+            </div>
+          </div>
+        );
+
       case "path":
         return (
-          <div className="relative w-full h-full flex items-center justify-center px-10">
-            <div className="w-full h-0.5 bg-zinc-800 rounded-full relative">
-              <div className="absolute left-0 right-1/2 h-full bg-lime-500" />
-              {[0, 50, 100].map((left, idx) => (
-                <div key={idx} className={`absolute top-1/2 -translate-y-1/2 h-2.5 w-2.5 rounded-full border flex items-center justify-center text-[6px] font-mono font-bold ${idx <= 1 ? "bg-lime-500 border-lime-400 text-black" : "bg-zinc-950 border-zinc-700 text-zinc-500"}`} style={{ left: `${left}%`, transform: "translate(-50%, -50%)" }}>
-                  {idx+1}
+          <div className="relative w-full h-full flex flex-col justify-between p-3 overflow-hidden select-none font-mono">
+            <div className="flex items-center justify-between text-[8px] border-b border-zinc-900 pb-1">
+              <span className="text-lime-400 font-bold">PORTFOLIO OPTIMIZATION CURVE</span>
+              <span className="text-zinc-500">MONTE CARLO</span>
+            </div>
+            <div className="flex items-center justify-center h-12 relative">
+              <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 10,40 Q 80,45 150,20 T 320,10" fill="none" stroke="#84cc16" strokeWidth="2" />
+                <path d="M 10,40 Q 80,30 150,35 T 320,25" fill="none" stroke="rgba(132,204,22,0.3)" strokeWidth="1" strokeDasharray="3,3" />
+              </svg>
+              <span className="absolute right-4 top-2 text-[8px] font-bold text-lime-400 bg-lime-950/80 px-1 rounded border border-lime-800">
+                SHARPE: 2.84
+              </span>
+            </div>
+            <div className="text-[7px] text-zinc-500 border-t border-zinc-900 pt-1 flex justify-between">
+              <span>SIMULATIONS: 10,000 RUNS</span>
+              <span className="text-lime-400">MAX_DRAWDOWN: 4.1%</span>
+            </div>
+          </div>
+        );
+
+      case "calendar":
+        return (
+          <div className="relative w-full h-full flex flex-col justify-between p-3 overflow-hidden select-none font-mono">
+            <div className="flex items-center justify-between text-[8px] border-b border-zinc-900 pb-1">
+              <span className="text-rose-400 font-bold">HL7 / FHIR SCHEDULER</span>
+              <span className="text-emerald-400">SLOT_LOCKED</span>
+            </div>
+            <div className="grid grid-cols-4 gap-1 py-1">
+              {["09:00", "10:30", "13:00", "14:30"].map((slot, i) => (
+                <div key={i} className={`p-1 rounded text-center text-[7px] border ${i === 1 ? "bg-rose-500/20 border-rose-500 text-rose-300 font-bold" : "bg-zinc-900/60 border-zinc-800 text-zinc-500"}`}>
+                  {slot}
                 </div>
               ))}
             </div>
-          </div>
-        );
-      case "calendar":
-        return (
-          <div className="relative w-full h-full flex items-center justify-center gap-3">
-            <div className="grid grid-cols-3 gap-0.5 p-1 rounded border border-zinc-800 bg-zinc-900/60 w-16 h-10">
-              {[0,1,2,3,4,5].map((idx) => (
-                <div key={idx} className={`rounded-sm border border-zinc-900 flex items-center justify-center ${idx === 4 ? "bg-rose-500 border-rose-400 animate-pulse" : "bg-zinc-950"}`} />
-              ))}
-            </div>
-            <div className="flex flex-col gap-0.5">
-              <span className="h-1.5 w-8 bg-zinc-800 rounded-full" />
-              <span className="h-1 w-6 bg-zinc-800 rounded-full" />
+            <div className="text-[7px] text-zinc-500 border-t border-zinc-900 pt-1 flex justify-between">
+              <span>SYNC: APPOINTMENT_CONFIRMED</span>
+              <span className="text-rose-400">HIPAA_ENCRYPTED</span>
             </div>
           </div>
         );
+
       default:
         return null;
     }
   };
 
   return (
-    <div className="relative h-24 w-full bg-zinc-950/70 border-b border-zinc-900 overflow-hidden flex items-center justify-center">
-      {/* Grid line backdrop */}
-      <div className="absolute inset-0 opacity-10 bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:10px_10px]" />
+    <div className="relative h-36 w-full bg-zinc-950/90 border-b border-zinc-800/80 overflow-hidden flex flex-col justify-between">
+      {/* Background Subtle Cyber Grid */}
+      <div className="absolute inset-0 opacity-10 bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:14px_14px] pointer-events-none" />
       {getPreview()}
     </div>
   );
@@ -1105,10 +1336,23 @@ export default function ProjectsSection() {
   const filteredLab = activeTab === "all" ? labExperiments : labExperiments.filter(p => p.status === activeTab);
 
   return (
-    <section id="projects" className="relative py-32">
+    <section id="projects" className="relative py-32 overflow-hidden">
+      {/* Visual Ambient Backdrops */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -left-40 top-1/4 h-96 w-96 rounded-full bg-cyan-500/4 blur-[120px]" />
-        <div className="absolute -right-40 top-3/4 h-96 w-96 rounded-full bg-purple-500/4 blur-[120px]" />
+        <div className="absolute -left-32 top-1/4 h-[550px] w-[550px] rounded-full bg-cyan-500/18 blur-[130px]" />
+        <div className="absolute -right-32 top-2/3 h-[600px] w-[600px] rounded-full bg-purple-600/18 blur-[140px]" />
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[500px] w-[900px] rounded-full bg-blue-900/15 blur-[160px]" />
+        
+        {/* Subtle Tech Grid Accent */}
+        <div 
+          className="absolute inset-0 opacity-[0.035]"
+          style={{
+            backgroundImage: `radial-gradient(circle, rgba(56, 189, 248, 0.4) 1px, transparent 1px)`,
+            backgroundSize: "32px 32px",
+            maskImage: "radial-gradient(ellipse 60% 50% at 50% 50%, #000 60%, transparent 100%)",
+            WebkitMaskImage: "radial-gradient(ellipse 60% 50% at 50% 50%, #000 60%, transparent 100%)",
+          }}
+        />
       </div>
 
       <div className="container mx-auto px-6 xl:pl-32 max-w-7xl relative z-10">

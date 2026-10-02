@@ -1,6 +1,7 @@
 import NeonStick from "@/components/ui/NeonStick";
 import { ScrollProgress } from "@/components/ui/ScrollProgress";
 import SocialSidebar from "@/components/ui/SocialSidebar";
+import GlobalVisualAtmosphere from "@/components/ui/GlobalVisualAtmosphere";
 
 // Sections — evidence-first hiring manager order
 import HeroSection from "@/components/sections/HeroSection";
@@ -17,7 +18,8 @@ import Surprise3DSection from "@/components/sections/Surprise3DSection";
 
 export default function Home() {
   return (
-    <main className="relative bg-[#09090b]">
+    <main className="relative bg-[#070a14] min-h-screen text-white">
+      <GlobalVisualAtmosphere />
       <ScrollProgress />
       <SocialSidebar />
       <NeonStick />

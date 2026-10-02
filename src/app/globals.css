@@ -34,11 +34,13 @@
 
 html {
   scroll-behavior: initial; /* Lenis handles smooth scrolling */
+  overflow-x: clip;
 }
 
 body {
   background-color: var(--color-dark-bg);
   color: #fff;
+  overflow-x: clip;
 }
 
 /* Custom lenis styles */

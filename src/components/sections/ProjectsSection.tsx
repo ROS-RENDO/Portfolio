@@ -247,6 +247,7 @@ const PROJECTS: Project[] = [
     },
     learned: "Prompt chaining with structured JSON output taught me how to constrain LLM responses reliably without rigid parsing hacks.",
     previewType: "nodes",
+    image: "/images/projects/stackgen.jpg",
   },
   {
     id: 4,
@@ -322,6 +323,7 @@ const PROJECTS: Project[] = [
     quality: { typescript: false, eslint: false, unit: "Pending", integration: "Pending", e2e: "Pending", security: true, coverage: { backend: "0%", frontend: "0%" } },
     learned: "Understanding Go operators and API controller loops.",
     previewType: "k8s",
+    image: "/images/projects/techtune-healer.jpg",
   },
   {
     id: 6,
@@ -347,6 +349,7 @@ const PROJECTS: Project[] = [
     quality: { typescript: true, eslint: true, unit: "Pending", integration: "Pending", e2e: "Pending", security: true, coverage: { backend: "0%", frontend: "0%" } },
     learned: "Map integration coordinates calculations.",
     previewType: "house",
+    image: "/images/projects/real-estate.jpg",
   },
   {
     id: 7,
@@ -372,6 +375,7 @@ const PROJECTS: Project[] = [
     quality: { typescript: true, eslint: true, unit: "Pending", integration: "Pending", e2e: "Pending", security: true, coverage: { backend: "0%", frontend: "0%" } },
     learned: "LangGraph workflows execution.",
     previewType: "agents",
+    image: "/images/projects/ai-agents.jpg",
   },
   {
     id: 8,
@@ -397,6 +401,7 @@ const PROJECTS: Project[] = [
     quality: { typescript: false, eslint: false, unit: "Pending", integration: "Pending", e2e: "Pending", security: true, coverage: { backend: "0%", frontend: "0%" } },
     learned: "Handling low latency audio feed logs.",
     previewType: "waveform",
+    image: "/images/projects/jarvis.jpg",
   },
   {
     id: 9,
@@ -422,6 +427,7 @@ const PROJECTS: Project[] = [
     quality: { typescript: true, eslint: true, unit: "N/A", integration: "N/A", e2e: "N/A", security: true, coverage: { backend: "0%", frontend: "0%" } },
     learned: "",
     previewType: "path",
+    image: "/images/projects/guide-student.jpg",
   },
   {
     id: 10,
@@ -447,6 +453,7 @@ const PROJECTS: Project[] = [
     quality: { typescript: true, eslint: true, unit: "N/A", integration: "N/A", e2e: "N/A", security: true, coverage: { backend: "0%", frontend: "0%" } },
     learned: "",
     previewType: "calendar",
+    image: "/images/projects/doctor-meetup.jpg",
   },
 ];
 

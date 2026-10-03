@@ -959,7 +959,8 @@ export default function SurpriseCanvas({ scrollProgress }: { scrollProgress: Mot
     <div className="w-full h-full">
       <Canvas 
         camera={{ position: [0, 0, 0], fov: 60, near: 1, far: 1000 }}
-        gl={{ antialias: true, alpha: true }}
+        gl={{ antialias: false, alpha: true, powerPreference: "high-performance" }}
+        dpr={[1, 1.5]}
       >
         {/* Dynamic Atmosphere syncs fog and key lights to the scroll progress */}
         <DynamicAtmosphere progressRef={progressRef} />

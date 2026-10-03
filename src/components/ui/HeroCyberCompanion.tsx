@@ -192,7 +192,8 @@ export default function HeroCyberCompanion() {
       <div className="w-full h-[330px] sm:h-[370px] cursor-grab active:cursor-grabbing">
         <Canvas
           camera={{ position: [0, 0, 4.2], fov: 45 }}
-          gl={{ antialias: true, alpha: true }}
+          gl={{ antialias: false, alpha: true, powerPreference: "high-performance" }}
+          dpr={[1, 1.5]}
         >
           <ambientLight intensity={1.4} color="#f8fafc" />
           <directionalLight position={[5, 8, 5]} intensity={3.5} color="#e0f2fe" />

@@ -31,7 +31,8 @@ export default function NeonStick() {
       // length is SECTIONS.length
       const segLength = 1 / (SECTIONS.length - 1);
       const activeIdx = Math.round(latest / segLength);
-      setActiveSegment(Math.max(0, Math.min(activeIdx, SECTIONS.length - 1)));
+      const nextIdx = Math.max(0, Math.min(activeIdx, SECTIONS.length - 1));
+      setActiveSegment((prev) => (prev !== nextIdx ? nextIdx : prev));
     });
   }, [scaleY]);
 

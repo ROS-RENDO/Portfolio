@@ -1,10 +1,10 @@
 "use client";
 
-import { motion, useMotionValue, useTransform, AnimatePresence } from "framer-motion";
-import { useState, useRef, useCallback } from "react";
+import { motion, useMotionValue, useTransform, AnimatePresence, useScroll } from "framer-motion";
+import React, { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import {
-  FiGithub, FiExternalLink, FiX, FiZap, FiCheck, FiChevronRight,
-  FiActivity, FiCpu, FiDatabase, FiAlertTriangle, FiGitCommit, FiLayers
+  FiGithub, FiExternalLink, FiX, FiZap, FiCheck, FiChevronRight, FiChevronLeft,
+  FiActivity, FiCpu, FiDatabase, FiAlertTriangle, FiGitCommit, FiLayers, FiArrowRight
 } from "react-icons/fi";
 import {
   SiNextdotjs, SiNestjs, SiPostgresql, SiStripe, SiDocker,
@@ -464,7 +464,7 @@ function useTilt() {
 }
 
 // ─── Dynamic Visual Preview Component ───────────────────────────────────────
-function ProjectVisualPreview({ type, accent }: { type: string; accent: string }) {
+const ProjectVisualPreview = React.memo(function ProjectVisualPreview({ type, accent }: { type: string; accent: string }) {
   const getPreview = () => {
     switch (type) {
       case "map":
@@ -501,9 +501,9 @@ function ProjectVisualPreview({ type, accent }: { type: string; accent: string }
               <div className="flex-1 mx-3 relative h-6 flex items-center">
                 <div className="w-full h-0.5 border-t-2 border-dashed border-cyan-500/40" />
                 <motion.div
-                  animate={{ left: ["0%", "82%", "0%"] }}
+                  animate={{ x: [0, 140, 0] }}
                   transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                  className="absolute -top-2 flex items-center gap-1 bg-cyan-500/20 border border-cyan-400/50 px-1.5 py-0.5 rounded-full backdrop-blur-sm"
+                  className="absolute -top-2 flex items-center gap-1 bg-cyan-500/20 border border-cyan-400/50 px-1.5 py-0.5 rounded-full"
                 >
                   <span className="text-xs">🚗</span>
                   <span className="text-[7px] font-mono text-cyan-300 font-bold hidden sm:inline">1.2km</span>
@@ -568,14 +568,15 @@ function ProjectVisualPreview({ type, accent }: { type: string; accent: string }
                     className={`w-[1px] absolute ${c.up ? "bg-emerald-500/50" : "bg-rose-500/50"}`} 
                     style={{ height: `${c.wick}px`, bottom: "4px" }} 
                   />
-                  {/* Candle Body */}
+                  {/* Candle Body - GPU scaleY (zero layout reflow) */}
                   <motion.div
-                    animate={{ height: [`${c.h - 3}px`, `${c.h + 3}px`, `${c.h - 3}px`] }}
+                    animate={{ scaleY: [0.85, 1.15, 0.85] }}
                     transition={{ repeat: Infinity, duration: 2 + i * 0.25, ease: "easeInOut" }}
+                    style={{ height: `${c.h}px`, transformOrigin: "bottom" }}
                     className={`w-full max-w-[8px] rounded-[1px] relative z-10 ${
                       c.up 
-                        ? "bg-emerald-500 border border-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.3)]" 
-                        : "bg-rose-500 border border-rose-400 shadow-[0_0_8px_rgba(244,63,94,0.3)]"
+                        ? "bg-emerald-500 border border-emerald-400" 
+                        : "bg-rose-500 border border-rose-400"
                     }`}
                   />
                 </div>
@@ -599,11 +600,11 @@ function ProjectVisualPreview({ type, accent }: { type: string; accent: string }
             <div className="absolute bottom-2 left-2 w-2.5 h-2.5 border-b-2 border-l-2 border-rose-500" />
             <div className="absolute bottom-2 right-2 w-2.5 h-2.5 border-b-2 border-r-2 border-rose-500" />
 
-            {/* Sweeping Laser Scanner */}
+            {/* Sweeping Laser Scanner - GPU translateY (zero layout reflow) */}
             <motion.div
-              animate={{ top: ["8%", "88%", "8%"] }}
+              animate={{ y: [0, 100, 0] }}
               transition={{ repeat: Infinity, duration: 2.2, ease: "easeInOut" }}
-              className="absolute left-2 right-2 h-[1px] bg-gradient-to-r from-transparent via-rose-400 to-transparent shadow-[0_0_8px_#f43f5e] z-20 pointer-events-none"
+              className="absolute top-2 left-2 right-2 h-[1px] bg-gradient-to-r from-transparent via-rose-400 to-transparent shadow-[0_0_6px_#f43f5e] z-20 pointer-events-none"
             />
 
             {/* Top Status */}
@@ -753,14 +754,15 @@ function ProjectVisualPreview({ type, accent }: { type: string; accent: string }
               <span className="text-emerald-400 font-semibold">ALWAYS-ON</span>
             </div>
 
-            {/* Holographic Voice Waveform Centerpiece */}
+            {/* Voice Waveform Centerpiece - GPU scaleY (zero layout reflow) */}
             <div className="flex items-center justify-center gap-1.5 h-12 my-1">
               {[12, 28, 42, 18, 52, 34, 46, 20, 38, 14].map((h, i) => (
                 <motion.div
                   key={i}
-                  animate={{ height: [`${Math.max(6, h * 0.25)}px`, `${h}px`, `${Math.max(6, h * 0.25)}px`] }}
+                  animate={{ scaleY: [0.35, 1, 0.35] }}
                   transition={{ repeat: Infinity, duration: 0.8 + (i % 3) * 0.2, ease: "easeInOut" }}
-                  className="w-1.5 bg-gradient-to-t from-indigo-600 via-sky-400 to-cyan-300 rounded-full shadow-[0_0_6px_rgba(99,102,241,0.5)]"
+                  style={{ height: `${h}px`, transformOrigin: "center" }}
+                  className="w-1.5 bg-gradient-to-t from-indigo-600 via-sky-400 to-cyan-300 rounded-full"
                 />
               ))}
             </div>
@@ -876,107 +878,237 @@ function ProjectVisualPreview({ type, accent }: { type: string; accent: string }
   };
 
   return (
-    <div className="relative h-36 w-full bg-zinc-950/90 border-b border-zinc-800/80 overflow-hidden flex flex-col justify-between">
+    <div className="relative w-full h-full min-h-[220px] max-h-[360px] bg-zinc-950/90 rounded-xl border border-zinc-800/70 overflow-hidden flex flex-col justify-between shadow-inner">
       {/* Background Subtle Cyber Grid */}
       <div className="absolute inset-0 opacity-10 bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:14px_14px] pointer-events-none" />
       {getPreview()}
     </div>
   );
-}
+});
 
-// ─── Single project card ─────────────────────────────────────────────────────
-function ProjectCard({ project, index, onClick }: { project: Project; index: number; onClick: () => void }) {
+// ─── Horizontal Showcase Card ────────────────────────────────────────────────
+const HorizontalProjectCard = React.memo(function HorizontalProjectCard({
+  project,
+  index,
+  total,
+  onSelect,
+}: {
+  project: Project;
+  index: number;
+  total: number;
+  onSelect: (p: Project) => void;
+}) {
   const s = STATUS[project.status];
-  const { rotateX, rotateY, handleMove, handleLeave } = useTilt();
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 60, scale: 0.95 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.6, delay: (index % 3) * 0.1, ease: [0.22, 1, 0.36, 1] }}
-      style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-      onMouseMove={handleMove}
-      onMouseLeave={handleLeave}
-      onClick={onClick}
-      className="relative cursor-pointer"
+    <div
+      onClick={() => onSelect(project)}
+      className="relative shrink-0 w-[86vw] sm:w-[80vw] md:w-[75vw] lg:w-[70vw] xl:w-[880px] h-[64vh] min-h-[480px] max-h-[580px] rounded-2xl md:rounded-3xl border border-zinc-800 bg-[#0c0e17] hover:border-zinc-700 transition-colors duration-200 cursor-pointer group flex flex-col justify-between overflow-hidden"
     >
-      <div
-        className="absolute -inset-px rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl pointer-events-none"
-        style={{ background: `radial-gradient(circle at 50% 50%, ${project.glowColor}, transparent 70%)` }}
-      />
+      {/* Top accent line */}
+      <div className={`h-1 w-full bg-gradient-to-r ${project.accent}`} />
 
-      <div className="group relative rounded-2xl border border-zinc-800 bg-[#18181b]/80 backdrop-blur-sm overflow-hidden transition-all duration-300 hover:border-zinc-600 h-full flex flex-col">
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-0 bottom-0 w-16 bg-gradient-to-r from-transparent via-white/4 to-transparent opacity-0 group-hover:opacity-100 animate-beam-scan" />
-        </div>
-
-        <div className={`h-1 w-full bg-gradient-to-r ${project.accent}`} />
-
-        <ProjectVisualPreview type={project.previewType} accent={project.accent} />
-
-        <div className="p-5 flex-1 flex flex-col justify-between">
+      {/* Desktop 2-column, mobile stacked layout */}
+      <div className="flex-1 grid grid-cols-1 md:grid-cols-12 h-full overflow-hidden">
+        {/* Left column: Info, tech, metrics, action buttons */}
+        <div className="md:col-span-7 p-5 md:p-7 flex flex-col justify-between h-full border-b md:border-b-0 md:border-r border-zinc-800/60 overflow-y-auto">
           <div>
-            <div className="flex items-center justify-between mb-3">
-              <div className={`flex items-center gap-2 rounded-full border px-2 py-0.5 ${s.ring}`}>
+            {/* Top row: Project index + status */}
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-2xl md:text-3xl font-extrabold text-zinc-500/80 group-hover:text-white transition-colors">
+                  #{String(project.id).padStart(2, "0")}
+                </span>
+                <span className="font-mono text-xs text-zinc-600">/ {String(total).padStart(2, "0")}</span>
+              </div>
+
+              <div className={`flex items-center gap-2 rounded-full border px-2.5 py-0.5 ${s.ring}`}>
                 <span className="relative flex h-1.5 w-1.5">
                   {project.status !== "planned" && (
                     <span className={`absolute inline-flex h-full w-full rounded-full ${s.dot} animate-status-ping opacity-60`} />
                   )}
                   <span className={`relative h-1.5 w-1.5 rounded-full ${s.dot}`} />
                 </span>
-                <span className={`font-mono text-[9px] font-bold ${s.text}`}>{s.label}</span>
+                <span className={`font-mono text-[10px] font-bold ${s.text}`}>{s.label}</span>
               </div>
-              <span className="font-mono text-xs text-zinc-700">#{String(project.id).padStart(2,"0")}</span>
             </div>
 
-            <h3 className="font-space-grotesk text-lg font-black text-white mb-0.5 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-zinc-400 transition-all duration-300">
+            {/* Title & Tagline */}
+            <h3 className="font-space-grotesk text-2xl md:text-3xl font-black text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-zinc-300 transition-all">
               {project.title}
             </h3>
-            <p className={`font-mono text-[10px] mb-2 bg-gradient-to-r ${project.accent} bg-clip-text text-transparent`}>
+            <p className={`font-mono text-xs font-semibold bg-gradient-to-r ${project.accent} bg-clip-text text-transparent mt-1 mb-2.5`}>
               {project.tagline}
             </p>
-            <p className="text-xs text-zinc-500 leading-relaxed mb-4 line-clamp-2">{project.description}</p>
-          </div>
 
-          <div>
-            <div className="flex flex-wrap gap-1.5 mb-4">
-              {project.tech.slice(0, 5).map((t) => {
-                const Icon = ICON[t] as any;
-                return Icon ? (
-                  <div key={t} title={t} className="flex h-6.5 w-6.5 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-900 text-zinc-400 hover:text-white hover:border-zinc-600 transition-all">
-                    <Icon size={12} />
-                  </div>
-                ) : (
-                  <span key={t} className="rounded border border-zinc-800 bg-zinc-900 px-1.5 py-0.5 font-mono text-[9px] text-zinc-500">{t}</span>
-                );
-              })}
-              {project.tech.length > 5 && (
-                <div className="flex h-6.5 items-center px-1.5 rounded-lg border border-zinc-800 bg-zinc-900 font-mono text-[9px] text-zinc-600">
-                  +{project.tech.length - 5}
-                </div>
-              )}
-            </div>
+            {/* Description */}
+            <p className="text-xs md:text-sm text-zinc-400 leading-relaxed line-clamp-3 mb-4">
+              {project.description}
+            </p>
 
-            <div className="grid grid-cols-2 gap-2 mb-3">
-              {project.metrics.slice(0,2).map((m, i) => (
-                <div key={i} className="rounded-lg bg-zinc-900/80 border border-zinc-800 p-2">
-                  <div className="font-space-grotesk text-xs font-black text-white">{m.value}</div>
-                  <div className="font-mono text-[9px] text-zinc-600">{m.label}</div>
+            {/* Key Metrics */}
+            <div className="grid grid-cols-2 gap-2 mb-4">
+              {project.metrics.slice(0, 2).map((m, i) => (
+                <div key={i} className="rounded-xl bg-zinc-900/90 border border-zinc-800/80 p-2.5">
+                  <div className="font-space-grotesk text-sm font-bold text-white">{m.value}</div>
+                  <div className="font-mono text-[9px] text-zinc-500 mt-0.5">{m.label}</div>
                 </div>
               ))}
             </div>
 
-            <div className="flex items-center gap-1.5 text-[10px] text-zinc-500 group-hover:text-cyan-400 transition-colors">
-              <span>View case study</span>
-              <FiChevronRight size={10} className="group-hover:translate-x-0.5 transition-transform" />
+            {/* Tech Stack Chips */}
+            <div className="flex flex-wrap gap-1.5 mb-2">
+              {project.tech.slice(0, 6).map((t) => {
+                const Icon = ICON[t] as any;
+                return Icon ? (
+                  <div
+                    key={t}
+                    title={t}
+                    className="flex h-7 px-2 items-center gap-1.5 rounded-lg border border-zinc-800 bg-zinc-900/90 text-zinc-400 group-hover:text-zinc-200 group-hover:border-zinc-700 transition-all text-xs"
+                  >
+                    <Icon size={13} />
+                    <span className="font-mono text-[10px]">{t}</span>
+                  </div>
+                ) : (
+                  <span
+                    key={t}
+                    className="rounded-lg border border-zinc-800 bg-zinc-900/90 px-2 py-1 font-mono text-[10px] text-zinc-500"
+                  >
+                    {t}
+                  </span>
+                );
+              })}
+              {project.tech.length > 6 && (
+                <div className="flex h-7 items-center px-2 rounded-lg border border-zinc-800 bg-zinc-900/90 font-mono text-[10px] text-zinc-500">
+                  +{project.tech.length - 6} more
+                </div>
+              )}
             </div>
+          </div>
+
+          {/* Action Row */}
+          <div className="flex items-center gap-2 pt-3 border-t border-zinc-800/80 mt-2" onClick={(e) => e.stopPropagation()}>
+            <button
+              type="button"
+              onClick={() => onSelect(project)}
+              className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-4 py-2.5 font-space-grotesk text-xs font-bold text-white shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 hover:opacity-95 active:scale-[0.98] transition-all"
+            >
+              <FiZap size={13} />
+              <span>Deep Dive Case Study</span>
+            </button>
+
+            {project.github !== "#" && (
+              <a
+                href={project.github}
+                target="_blank"
+                rel="noreferrer"
+                title="View GitHub Repository"
+                className="flex h-9 w-9 items-center justify-center rounded-xl border border-zinc-800 bg-zinc-900/90 text-zinc-400 hover:text-white hover:border-zinc-600 transition-all"
+              >
+                <FiGithub size={15} />
+              </a>
+            )}
+
+            {project.demo !== "#" && (
+              <a
+                href={project.demo}
+                target="_blank"
+                rel="noreferrer"
+                title="Live Demo"
+                className="flex h-9 w-9 items-center justify-center rounded-xl border border-zinc-800 bg-zinc-900/90 text-cyan-400 hover:text-cyan-300 hover:border-cyan-500/50 transition-all"
+              >
+                <FiExternalLink size={15} />
+              </a>
+            )}
+          </div>
+        </div>
+
+        {/* Right column: Interactive Visual Simulation */}
+        <div className="md:col-span-5 bg-zinc-950/80 p-4 md:p-5 flex flex-col justify-between h-full relative overflow-hidden">
+          <div className="flex items-center justify-between pb-2 mb-2 border-b border-zinc-900">
+            <span className="font-mono text-[9px] text-zinc-500 uppercase tracking-widest flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+              LIVE TELEMETRY HUD
+            </span>
+            <span className="font-mono text-[9px] text-zinc-600">SYS://0{project.id}</span>
+          </div>
+
+          <div className="flex-1 w-full flex items-center justify-center overflow-hidden py-1">
+            <ProjectVisualPreview type={project.previewType} accent={project.accent} />
+          </div>
+
+          <div className="pt-2 border-t border-zinc-900 flex items-center justify-between">
+            <span className="font-mono text-[8px] text-zinc-600 uppercase">
+              {project.status === "completed" ? "PRODUCTION CERTIFIED" : "LAB PROTOTYPE"}
+            </span>
+            <button
+              onClick={() => onSelect(project)}
+              className="flex items-center gap-1 font-mono text-[9px] text-zinc-400 hover:text-cyan-300 transition-colors"
+            >
+              <span>Architecture Map</span>
+              <FiChevronRight size={10} />
+            </button>
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
-}
+});
+
+// ─── End-of-Track Card ("The Lab & Beyond") ──────────────────────────────────
+const EndTrackCard = React.memo(function EndTrackCard({ total }: { total: number }) {
+  return (
+    <div className="relative shrink-0 w-[80vw] sm:w-[60vw] md:w-[48vw] lg:w-[42vw] xl:w-[460px] h-[64vh] min-h-[480px] max-h-[580px] rounded-2xl md:rounded-3xl border border-dashed border-zinc-800 bg-[#0c0e17] p-6 md:p-8 flex flex-col justify-between text-center overflow-hidden group hover:border-zinc-600 transition-colors">
+
+      {/* Top Header */}
+      <div className="flex items-center justify-between pb-3 border-b border-zinc-900">
+        <span className="font-mono text-[9px] text-zinc-500 uppercase tracking-widest">
+          TRACK COMPLETE // {total} OF {total}
+        </span>
+        <span className="font-mono text-[9px] text-cyan-400 font-bold">NEXT HORIZON</span>
+      </div>
+
+      {/* Middle Content */}
+      <div className="my-auto py-6">
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.2)]">
+          <FiLayers size={26} />
+        </div>
+        <h3 className="font-space-grotesk text-2xl md:text-3xl font-black text-white mb-2">
+          The Lab & Beyond
+        </h3>
+        <p className="text-zinc-400 text-xs md:text-sm leading-relaxed max-w-sm mx-auto mb-6">
+          Looking for open-source AI pipelines, backend experiments, or want to discuss an architecture?
+        </p>
+
+        <div className="flex flex-col gap-2.5 max-w-xs mx-auto">
+          <a
+            href="https://github.com/ROS-RENDO"
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center justify-center gap-2 rounded-xl bg-zinc-900 border border-zinc-700/80 px-4 py-2.5 font-space-grotesk text-xs font-bold text-white hover:border-zinc-500 hover:bg-zinc-800 transition-all"
+          >
+            <FiGithub size={15} />
+            <span>Explore GitHub Repositories</span>
+          </a>
+
+          <a
+            href="#contact"
+            className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 px-4 py-2.5 font-space-grotesk text-xs font-bold text-white shadow-lg shadow-cyan-500/20 hover:opacity-90 transition-all"
+          >
+            <FiZap size={14} />
+            <span>Initiate Collaboration</span>
+          </a>
+        </div>
+      </div>
+
+      {/* Bottom Hint */}
+      <div className="pt-3 border-t border-zinc-900 text-zinc-500 font-mono text-[9px] flex items-center justify-center gap-1.5">
+        <span>Scroll down to continue to Journey & Tech Stack</span>
+        <FiArrowRight size={10} className="rotate-90" />
+      </div>
+    </div>
+  );
+});
 
 // ─── Custom Vector Architecture Viewer ───────────────────────────────────────
 function ArchitectureViewer({ projectId }: { projectId: number }) {
@@ -1316,167 +1448,272 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
   );
 }
 
-// ─── Section tabs ─────────────────────────────────────────────────────────────
-const TABS: { key: StatusKey | "all"; label: string; count: number }[] = [
-  { key: "all",       label: "All",         count: PROJECTS.length },
-  { key: "completed", label: "Completed",   count: PROJECTS.filter(p => p.status === "completed").length },
-  { key: "progress",  label: "In Progress", count: PROJECTS.filter(p => p.status === "progress").length  },
-  { key: "planned",   label: "Planned",     count: PROJECTS.filter(p => p.status === "planned").length   },
-];
-
-// ─── Main section ─────────────────────────────────────────────────────────────
+// ─── Main horizontal scroll section ──────────────────────────────────────────
 export default function ProjectsSection() {
-  const [activeTab, setActiveTab] = useState<StatusKey | "all">("all");
+  const [activeTab, setActiveTab] = useState<"all" | "completed" | "lab">("all");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [currentCardIndex, setCurrentCardIndex] = useState(0);
 
-  const selectedWork = PROJECTS.filter(p => p.status === "completed");
-  const labExperiments = PROJECTS.filter(p => p.status !== "completed");
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [scrollRange, setScrollRange] = useState(0);
 
-  const filteredSelected = activeTab === "all" ? selectedWork : selectedWork.filter(p => p.status === activeTab);
-  const filteredLab = activeTab === "all" ? labExperiments : labExperiments.filter(p => p.status === activeTab);
+  const displayProjects = useMemo(() => {
+    if (activeTab === "completed") return PROJECTS.filter((p) => p.status === "completed");
+    if (activeTab === "lab") return PROJECTS.filter((p) => p.status !== "completed");
+    return PROJECTS;
+  }, [activeTab]);
+
+  // Recalculate track width on mount, resize, and project filter change
+  useEffect(() => {
+    const updateScrollRange = () => {
+      if (trackRef.current) {
+        const totalWidth = trackRef.current.scrollWidth;
+        const viewportWidth = window.innerWidth;
+        const range = totalWidth - viewportWidth + 80;
+        setScrollRange(Math.max(0, range));
+      }
+    };
+
+    updateScrollRange();
+    const handleResize = () => updateScrollRange();
+    window.addEventListener("resize", handleResize);
+
+    const observer = new ResizeObserver(() => updateScrollRange());
+    if (trackRef.current) observer.observe(trackRef.current);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      observer.disconnect();
+    };
+  }, [displayProjects]);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end end"],
+  });
+
+  // Direct 1:1 hardware-accelerated transform without laggy spring physics
+  const x = useTransform(scrollYProgress, [0, 1], [0, -scrollRange]);
+  const progressPercent = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+
+  // Track active card index based on scroll position - ONLY update state when index changes
+  useEffect(() => {
+    const unsubscribe = scrollYProgress.on("change", (latest) => {
+      const total = displayProjects.length + 1; // including end card
+      const idx = Math.min(total - 1, Math.floor(latest * total));
+      setCurrentCardIndex((prev) => (prev !== idx ? idx : prev));
+    });
+    return () => unsubscribe();
+  }, [scrollYProgress, displayProjects.length]);
+
+  const scrollToProject = (index: number) => {
+    if (!sectionRef.current) return;
+    const total = displayProjects.length + 1;
+    const sectionTop = sectionRef.current.getBoundingClientRect().top + window.scrollY;
+    const scrollableDistance = sectionRef.current.offsetHeight - window.innerHeight;
+    const targetY = sectionTop + (index / (total - 1)) * scrollableDistance;
+    window.scrollTo({ top: targetY, behavior: "smooth" });
+  };
+
+  const handleSelectProject = useCallback((project: Project) => {
+    setSelectedProject(project);
+  }, []);
+
+  const handleWheel = (e: React.WheelEvent) => {
+    // Translate horizontal trackpad swipes into vertical scroll ticks
+    if (Math.abs(e.deltaX) > Math.abs(e.deltaY) && Math.abs(e.deltaX) > 10) {
+      window.scrollBy({ top: e.deltaX * 1.5, behavior: "auto" });
+    }
+  };
 
   return (
-    <section id="projects" className="relative py-32 overflow-hidden">
+    <section
+      id="projects"
+      ref={sectionRef}
+      className="relative w-full bg-[#070a14]"
+      style={{ height: `calc(100vh + ${displayProjects.length * 48}vh)` }}
+    >
       {/* Visual Ambient Backdrops */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -left-32 top-1/4 h-[550px] w-[550px] rounded-full bg-cyan-500/18 blur-[130px]" />
-        <div className="absolute -right-32 top-2/3 h-[600px] w-[600px] rounded-full bg-purple-600/18 blur-[140px]" />
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[500px] w-[900px] rounded-full bg-blue-900/15 blur-[160px]" />
+        <div className="absolute -left-32 top-1/4 h-[550px] w-[550px] rounded-full bg-cyan-500/12 blur-[140px]" />
+        <div className="absolute -right-32 top-2/3 h-[600px] w-[600px] rounded-full bg-purple-600/12 blur-[150px]" />
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[500px] w-[900px] rounded-full bg-blue-900/10 blur-[180px]" />
         
         {/* Subtle Tech Grid Accent */}
         <div 
-          className="absolute inset-0 opacity-[0.035]"
+          className="absolute inset-0 opacity-[0.03]"
           style={{
             backgroundImage: `radial-gradient(circle, rgba(56, 189, 248, 0.4) 1px, transparent 1px)`,
             backgroundSize: "32px 32px",
-            maskImage: "radial-gradient(ellipse 60% 50% at 50% 50%, #000 60%, transparent 100%)",
-            WebkitMaskImage: "radial-gradient(ellipse 60% 50% at 50% 50%, #000 60%, transparent 100%)",
           }}
         />
       </div>
 
-      <div className="container mx-auto px-6 xl:pl-32 max-w-7xl relative z-10">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8 }}
-          className="mb-12"
-        >
-          <div className="flex items-center gap-4 mb-3">
-            <span className="font-mono text-xs text-zinc-600">02.</span>
-            <div className="h-px flex-1 bg-zinc-800" />
-          </div>
-          <h2 className="font-space-grotesk text-4xl font-bold md:text-6xl">
-            Selected{" "}
-            <span className="animate-gradient-text bg-gradient-to-r from-cyan-400 via-purple-400 to-rose-400 bg-clip-text text-transparent">
-              Work
-            </span>
-          </h2>
-          <p className="mt-4 text-zinc-500 max-w-lg text-xs font-mono">
-            {selectedWork.length} production-grade codebases · {labExperiments.length} experiments in the Lab
-          </p>
-        </motion.div>
-
-        {/* Filter tabs */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="flex gap-2 flex-wrap mb-10"
-        >
-          {TABS.map(tab => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              className={`relative flex items-center gap-2 rounded-full border px-4 py-2 font-space-grotesk text-sm font-medium transition-all duration-200 ${
-                activeTab === tab.key
-                  ? "border-cyan-500/50 bg-cyan-500/10 text-cyan-400"
-                  : "border-zinc-800 bg-zinc-900/50 text-zinc-500 hover:border-zinc-700 hover:text-zinc-300"
-              }`}
-            >
-              {tab.label}
-              <span className={`rounded-full px-1.5 py-0.5 font-mono text-[10px] ${
-                activeTab === tab.key ? "bg-cyan-500/20 text-cyan-300" : "bg-zinc-800 text-zinc-600"
-              }`}>
-                {tab.count}
-              </span>
-              {activeTab === tab.key && (
-                <motion.div
-                  layoutId="tab-indicator"
-                  className="absolute inset-0 rounded-full border border-cyan-500/30"
-                  transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
-                />
-              )}
-            </button>
-          ))}
-        </motion.div>
-
-        {/* ─── Grid 1: Selected Production Work ─── */}
-        {filteredSelected.length > 0 && (
-          <div className="mb-20">
-            <p className="font-space-grotesk text-xs font-bold uppercase tracking-widest text-zinc-500 mb-6">Production Systems</p>
-            <motion.div
-              layout
-              className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
-            >
-              <AnimatePresence mode="popLayout">
-                {filteredSelected.map((project, i) => (
-                  <motion.div
-                    key={project.id}
-                    layout
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.35, delay: i * 0.05 }}
-                  >
-                    <ProjectCard
-                      project={project}
-                      index={i}
-                      onClick={() => setSelectedProject(project)}
-                    />
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </motion.div>
-          </div>
-        )}
-
-        {/* ─── Grid 2: The Lab (Experiments) ─── */}
-        {filteredLab.length > 0 && (
-          <div className="border-t border-zinc-900 pt-16">
-            <div className="mb-6">
-              <h3 className="font-space-grotesk text-2xl font-black text-white">The Lab</h3>
-              <p className="text-zinc-500 text-xs mt-1">Experiments, scripts, and in-progress microservices.</p>
+      {/* Pinned Sticky Viewport */}
+      <div 
+        onWheel={handleWheel}
+        className="sticky top-0 h-screen w-full flex flex-col justify-between py-5 md:py-6 overflow-hidden z-10 select-none"
+      >
+        {/* Top HUD Header */}
+        <div className="w-full px-6 md:px-12 lg:px-20 z-20">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-zinc-800/80 pb-4">
+            <div>
+              <div className="flex items-center gap-3 mb-1">
+                <span className="font-mono text-xs text-zinc-500 font-bold">02.</span>
+                <span className="font-mono text-xs uppercase tracking-widest text-cyan-400">
+                  // SELECTED WORK & ARCHITECTURES
+                </span>
+              </div>
+              <h2 className="font-space-grotesk text-2xl md:text-4xl font-black text-white">
+                Featured{" "}
+                <span className="animate-gradient-text bg-gradient-to-r from-cyan-400 via-purple-400 to-rose-400 bg-clip-text text-transparent">
+                  Systems & Works
+                </span>
+              </h2>
             </div>
-            <motion.div
-              layout
-              className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
-            >
-              <AnimatePresence mode="popLayout">
-                {filteredLab.map((project, i) => (
-                  <motion.div
-                    key={project.id}
-                    layout
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.35, delay: i * 0.05 }}
-                  >
-                    <ProjectCard
-                      project={project}
-                      index={i}
-                      onClick={() => setSelectedProject(project)}
-                    />
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </motion.div>
-          </div>
-        )}
 
+            {/* Filter Tabs & Navigation Controls */}
+            <div className="flex items-center flex-wrap gap-3">
+              {/* Category Filter Pills */}
+              <div className="flex items-center gap-1.5 p-1 rounded-xl bg-zinc-900/80 border border-zinc-800">
+                {(
+                  [
+                    { key: "all", label: "All Works", count: PROJECTS.length },
+                    { key: "completed", label: "Production", count: PROJECTS.filter((p) => p.status === "completed").length },
+                    { key: "lab", label: "The Lab", count: PROJECTS.filter((p) => p.status !== "completed").length },
+                  ] as const
+                ).map((tab) => (
+                  <button
+                    key={tab.key}
+                    type="button"
+                    onClick={() => setActiveTab(tab.key)}
+                    className={`relative px-3 py-1 rounded-lg font-space-grotesk text-xs font-semibold transition-all ${
+                      activeTab === tab.key
+                        ? "bg-zinc-800 text-cyan-300 shadow-sm"
+                        : "text-zinc-500 hover:text-zinc-300"
+                    }`}
+                  >
+                    <span>{tab.label}</span>
+                    <span className="ml-1.5 font-mono text-[10px] text-zinc-400 opacity-70">
+                      {tab.count}
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              {/* Progress counter & mini bar */}
+              <div className="hidden sm:flex items-center gap-3 px-3 py-1.5 rounded-xl bg-zinc-900/80 border border-zinc-800 font-mono text-xs">
+                <span className="text-zinc-400">
+                  <span className="text-white font-bold">
+                    {String(Math.min(displayProjects.length, currentCardIndex + 1)).padStart(2, "0")}
+                  </span>
+                  {" / "}
+                  <span className="text-zinc-600">
+                    {String(displayProjects.length).padStart(2, "0")}
+                  </span>
+                </span>
+                <div className="w-16 h-1.5 rounded-full bg-zinc-800 overflow-hidden">
+                  <motion.div
+                    style={{ width: progressPercent }}
+                    className="h-full bg-gradient-to-r from-cyan-400 to-purple-500"
+                  />
+                </div>
+              </div>
+
+              {/* Prev / Next buttons */}
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  title="Previous Project"
+                  onClick={() => scrollToProject(Math.max(0, currentCardIndex - 1))}
+                  disabled={currentCardIndex === 0}
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-900/90 text-zinc-400 hover:text-white hover:border-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                >
+                  <FiChevronLeft size={16} />
+                </button>
+                <button
+                  type="button"
+                  title="Next Project"
+                  onClick={() => scrollToProject(Math.min(displayProjects.length, currentCardIndex + 1))}
+                  disabled={currentCardIndex >= displayProjects.length}
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-900/90 text-zinc-400 hover:text-white hover:border-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                >
+                  <FiChevronRight size={16} />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Horizontal Sliding Cards Track */}
+        <div className="w-full flex-1 flex items-center overflow-visible my-auto py-2">
+          <motion.div
+            ref={trackRef}
+            style={{ x, willChange: "transform", transform: "translateZ(0)" }}
+            className="flex gap-6 md:gap-8 items-center pl-6 md:pl-16 lg:pl-24 pr-12 md:pr-24"
+          >
+            {displayProjects.map((project, idx) => (
+              <HorizontalProjectCard
+                key={project.id}
+                project={project}
+                index={idx}
+                total={displayProjects.length}
+                onSelect={handleSelectProject}
+              />
+            ))}
+
+            {/* End of Track Showcase Card */}
+            <EndTrackCard total={displayProjects.length} />
+          </motion.div>
+        </div>
+
+        {/* Bottom Navigation & Scroll Indicator HUD */}
+        <div className="w-full px-6 md:px-12 lg:px-20 z-20">
+          <div className="flex items-center justify-between pt-3 border-t border-zinc-900 text-xs">
+            {/* Left status telemetry */}
+            <div className="hidden md:flex items-center gap-2 font-mono text-[10px] text-zinc-500">
+              <span className="flex h-2 w-2 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+              </span>
+              <span>SCROLL INTERFACE ACTIVE // {displayProjects.length} PIPELINES</span>
+            </div>
+
+            {/* Center dots navigation */}
+            <div className="flex items-center gap-1.5 mx-auto md:mx-0">
+              {displayProjects.map((p, i) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  title={`Jump to ${p.title}`}
+                  onClick={() => scrollToProject(i)}
+                  className={`h-1.5 transition-all rounded-full ${
+                    currentCardIndex === i
+                      ? "w-6 bg-gradient-to-r from-cyan-400 to-purple-400"
+                      : "w-1.5 bg-zinc-800 hover:bg-zinc-600"
+                  }`}
+                />
+              ))}
+              <button
+                type="button"
+                title="Jump to The Lab"
+                onClick={() => scrollToProject(displayProjects.length)}
+                className={`h-1.5 transition-all rounded-full ${
+                  currentCardIndex === displayProjects.length
+                    ? "w-6 bg-cyan-400"
+                    : "w-1.5 bg-zinc-800 hover:bg-zinc-600"
+                }`}
+              />
+            </div>
+
+            {/* Right Scroll hint */}
+            <div className="flex items-center gap-2 font-mono text-[10px] text-zinc-500">
+              <span className="hidden sm:inline">VERTICAL SCROLL CONTROLS HORIZONTAL TRACK</span>
+              <span className="text-cyan-400 font-bold">⇄</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Case study modal */}

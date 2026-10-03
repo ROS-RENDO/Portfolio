@@ -89,6 +89,7 @@ interface Project {
   quality: QualitySignal;
   learned: string;
   previewType: "map" | "chart" | "nodes" | "yolo" | "k8s" | "house" | "agents" | "waveform" | "path" | "calendar";
+  image?: string;
 }
 
 const PROJECTS: Project[] = [
@@ -146,6 +147,7 @@ const PROJECTS: Project[] = [
     },
     learned: "Designed payment escrow logic from scratch — understood when to capture vs. hold funds and how to handle dispute reversals safely.",
     previewType: "map",
+    image: "/images/projects/servicefinder.jpg",
   },
   {
     id: 2,
@@ -195,6 +197,7 @@ const PROJECTS: Project[] = [
     },
     learned: "Working with financial data taught me to never trust latency — I built an optimistic UI layer that pre-calculates next state while waiting for confirmation.",
     previewType: "chart",
+    image: "/images/projects/trading-dashboard.jpg",
   },
   {
     id: 3,
@@ -293,6 +296,7 @@ const PROJECTS: Project[] = [
     },
     learned: "Model quantisation for INT8 reduced memory 4× with only 2% mAP loss — crucial for edge deployment viability.",
     previewType: "yolo",
+    image: "/images/projects/ai-builder.jpg",
   },
   {
     id: 5,
@@ -1034,7 +1038,24 @@ const HorizontalProjectCard = React.memo(function HorizontalProjectCard({
           </div>
 
           <div className="flex-1 w-full flex items-center justify-center overflow-hidden py-1">
-            <ProjectVisualPreview type={project.previewType} accent={project.accent} />
+            {project.image ? (
+              <div className="relative w-full h-full min-h-[220px] max-h-[360px] rounded-xl overflow-hidden border border-zinc-800/80 group/img">
+                <img
+                  src={project.image}
+                  alt={project.title}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover object-top transition-transform duration-500 group-hover/img:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+                <div className="absolute bottom-2 left-2 flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-black/75 backdrop-blur-sm border border-zinc-700/80 font-mono text-[8px] text-zinc-300">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                  <span>HD UI MOCKUP</span>
+                </div>
+              </div>
+            ) : (
+              <ProjectVisualPreview type={project.previewType} accent={project.accent} />
+            )}
           </div>
 
           <div className="pt-2 border-t border-zinc-900 flex items-center justify-between">
@@ -1256,6 +1277,17 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
                   exit={{ opacity: 0, y: -10 }}
                   className="space-y-6"
                 >
+                  {project.image && (
+                    <div className="relative w-full h-52 sm:h-64 rounded-xl overflow-hidden border border-zinc-800 mb-6 group">
+                      <img
+                        src={project.image}
+                        alt={project.title}
+                        className="w-full h-full object-cover object-top"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#111113]/70 via-transparent to-transparent pointer-events-none" />
+                    </div>
+                  )}
+
                   <div>
                     <p className="font-space-grotesk text-xs font-bold uppercase tracking-widest text-zinc-500 mb-2">Description</p>
                     <p className="text-zinc-400 leading-relaxed text-sm">{project.description}</p>
